@@ -58,7 +58,7 @@ public class ProductoController {
     @DeleteMapping("eliminar/{id}")
     public ResponseEntity<String> deleteProducto(@PathVariable Long id){
         try {
-            return ResponseEntity.ok(productoService.deleteProducto(id));
+            return ResponseEntity.ok(productoService.deleteProductoById(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }

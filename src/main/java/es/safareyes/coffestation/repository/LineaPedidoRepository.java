@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long> {
@@ -44,5 +45,11 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
             ORDER BY SUM(lp.cantidad) DESC
 """)
     Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable);
+
+    //Para eliminar producto primero eliminar relacion linea_pedido
+    List<LineaPedido> findAllByProductoId(Long id);
+
+    //Para eliminar pedido primero eliminar relacion linea_pedido
+    List<LineaPedido> findAllByPedidoId(Long id);
 }
 

@@ -2,7 +2,11 @@ package es.safareyes.coffestation.service;
 
 import es.safareyes.coffestation.dto.PedidoDTO;
 import es.safareyes.coffestation.enums.Estado;
+import es.safareyes.coffestation.model.Descuento;
+import es.safareyes.coffestation.model.LineaPedido;
 import es.safareyes.coffestation.model.Pedido;
+import es.safareyes.coffestation.repository.DescuentoRepository;
+import es.safareyes.coffestation.repository.LineaPedidoRepository;
 import es.safareyes.coffestation.repository.PedidoRepository;
 import es.safareyes.coffestation.specifications.PedidoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,12 @@ public class PedidoService {
 
     @Autowired
     private PedidoRepository pedidoRepository;
+
+    @Autowired
+    private DescuentoRepository descuentoRepository;
+
+    @Autowired
+    private LineaPedidoRepository lineaPedidoRepository;
 
     public Page<Pedido> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
         return pedidoRepository.findAll(
@@ -45,6 +55,17 @@ public class PedidoService {
     public Integer getPedidosByCupon(String codigo){
         return pedidoRepository.findByCupon_Codigo(codigo);
 
+    }
+
+    public String deletePedidoById(Long id){
+        List<Descuento> descuentos = descuentoRepository.findAllByPedidoId(id);
+        descuentoRepository.deleteAll(descuentos);
+
+        List<LineaPedido> lineas = lineaPedidoRepository.findAllByPedidoId(id);
+        lineaPedidoRepository.deleteAll(lineas);
+
+        pedidoRepository.deleteById(id);
+        return "Pedido Eliminado";
     }
 
 }

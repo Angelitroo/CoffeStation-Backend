@@ -4,6 +4,7 @@ import es.safareyes.coffestation.dto.ProductoDTO;
 import es.safareyes.coffestation.dto.ProductoDTOcrear;
 import es.safareyes.coffestation.model.Alergeno;
 import es.safareyes.coffestation.model.Categoria;
+import es.safareyes.coffestation.model.LineaPedido;
 import es.safareyes.coffestation.model.Producto;
 import es.safareyes.coffestation.repository.AlergenoRepository;
 import es.safareyes.coffestation.repository.CategoriaRepository;
@@ -102,7 +103,9 @@ public class ProductoService {
         return convertToDTO(productoUpdated);
     }
 
-    public String deleteProducto(Long id){
+    public String deleteProductoById(Long id){
+        List<LineaPedido> lineas = lineaPedidoRepository.findAllByProductoId(id);
+        lineaPedidoRepository.deleteAll(lineas);
         productoRepository.deleteById(id);
         return "Producto Eliminado";
     }

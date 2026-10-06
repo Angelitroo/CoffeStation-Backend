@@ -6,6 +6,7 @@ import es.safareyes.coffestation.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,15 @@ public class PedidoController {
     @PutMapping("/actualizar/{id}")
     public Pedido updatePedidoEstado(@PathVariable Long id, @RequestBody PedidoDTO pedidoDTO){
         return pedidoService.updatePedidoEstado(id, pedidoDTO);
+    }
+
+    @DeleteMapping("eliminar/{id}")
+    public ResponseEntity<String> deletePedidoById(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(pedidoService.deletePedidoById(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
 }
