@@ -4,10 +4,14 @@ import es.safareyes.coffestation.dto.PedidoDTO;
 import es.safareyes.coffestation.enums.Estado;
 import es.safareyes.coffestation.model.Pedido;
 import es.safareyes.coffestation.repository.PedidoRepository;
+import es.safareyes.coffestation.specifications.PedidoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,8 +21,9 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
-    public List<Pedido> getAllPedidos(){
-        return pedidoRepository.findAll();
+    public Page<Pedido> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
+        return pedidoRepository.findAll(
+                PedidoSpec.filtrosPedidos(fecha, estado), pageable);
     }
 
     public Pedido getPedidoById(Long id){

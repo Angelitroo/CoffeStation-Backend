@@ -1,12 +1,15 @@
 package es.safareyes.coffestation.controller;
-
 import es.safareyes.coffestation.dto.PedidoDTO;
+import es.safareyes.coffestation.enums.Estado;
 import es.safareyes.coffestation.model.Pedido;
 import es.safareyes.coffestation.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,8 +20,13 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @GetMapping
-    public ResponseEntity<List<Pedido>> getAllPedidos(){
-        return ResponseEntity.ok(pedidoService.getAllPedidos());
+    public Page<Pedido> getAllPedidos(
+            @RequestParam(required = false) LocalDateTime fecha,
+            @RequestParam(required = false) Estado estado,
+            Pageable pageable)
+    {
+
+        return pedidoService.getAllPedidosFiltros(fecha, estado, pageable);
     }
 
     @GetMapping("/{id}")
