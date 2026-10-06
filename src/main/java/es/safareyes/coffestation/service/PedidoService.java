@@ -53,9 +53,11 @@ public class PedidoService {
         pedido.setNumeroTurno(pedidoDTO.getNumeroTurno());
         pedido.setEstado(pedidoDTO.getEstado());
 
+        //Primero vemos si se usa cupon o no
         if (pedidoDTO.getCuponId() != null) {
             Cupon cupon = cuponRepository.findById(pedidoDTO.getCuponId())
                     .orElseThrow(() -> new IllegalArgumentException("Cupon no encontrado"));
+            //En caso de usar un cupon se le resta un uso maximo al cupon
             cupon.setMaxUsos(cupon.getMaxUsos() - 1);
             cuponRepository.save(cupon);
             pedido.setCupon(cupon);
