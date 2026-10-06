@@ -32,5 +32,4 @@ public class LineaPedido {
     @Column(name = "precio_unitario", nullable = false, precision = 8, scale = 2)
     private BigDecimal precioUnitario;
 
-
 }

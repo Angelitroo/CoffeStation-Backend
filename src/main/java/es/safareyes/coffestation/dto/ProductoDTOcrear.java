@@ -15,6 +15,7 @@ public class ProductoDTOcrear {
     private String nombre;
     private String descripcion;
     private BigDecimal precio;
+    private BigDecimal iva;
     private Boolean disponible;
     private Boolean activo;
     private Long categoriaId;

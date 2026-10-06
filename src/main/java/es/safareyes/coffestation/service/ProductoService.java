@@ -7,11 +7,17 @@ import es.safareyes.coffestation.model.Categoria;
 import es.safareyes.coffestation.model.Producto;
 import es.safareyes.coffestation.repository.AlergenoRepository;
 import es.safareyes.coffestation.repository.CategoriaRepository;
+import es.safareyes.coffestation.repository.LineaPedidoRepository;
 import es.safareyes.coffestation.repository.ProductoRepository;
+import es.safareyes.coffestation.specifications.ProductoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import static  es.safareyes.coffestation.specifications.ProductoSpec.*;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -27,13 +33,21 @@ public class ProductoService {
     @Autowired
     private AlergenoRepository alergenoRepository;
 
-    public List<ProductoDTO> getAllProductos(){
-        return productoRepository.findAll().stream().map(this::convertToDTO).toList();
+    @Autowired
+    private LineaPedidoRepository lineaPedidoRepository;
+
+    public Page<Producto> getAllProductosFiltros(String nombre, String categoriaNombre,
+                                                 Boolean disponible, String nombreAlergeno, Boolean conAlergeno,
+                                                 BigDecimal precioMinimo, BigDecimal precioMaximo, Pageable pageable) {
+
+        return productoRepository.findAll(
+                ProductoSpec.filtrosProductos(nombre, categoriaNombre, disponible,
+                        nombreAlergeno, conAlergeno, precioMinimo, precioMaximo),
+                pageable
+        );
     }
 
-    public List<Producto> getAllProductosFull(){
-        return productoRepository.findAll();
-    }
+
 
     public Producto getProductoById(Long id){
         return productoRepository.findById(id).orElse(null);
@@ -45,6 +59,7 @@ public class ProductoService {
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
         producto.setPrecio(productoDTO.getPrecio());
+        producto.setIva(productoDTO.getIva());
         producto.setDisponible(productoDTO.getDisponible());
         producto.setActivo(productoDTO.getActivo());
 
@@ -69,6 +84,7 @@ public class ProductoService {
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
         producto.setPrecio(productoDTO.getPrecio());
+        producto.setIva(productoDTO.getIva());
         producto.setDisponible(productoDTO.getDisponible());
         producto.setActivo(productoDTO.getActivo());
 
@@ -86,6 +102,12 @@ public class ProductoService {
         return convertToDTO(productoUpdated);
     }
 
+    public String deleteProducto(Long id){
+        productoRepository.deleteById(id);
+        return "Producto Eliminado";
+    }
+
+
 
     public ProductoDTO convertToDTO(Producto producto) {
         return new ProductoDTO(
@@ -93,6 +115,7 @@ public class ProductoService {
                 producto.getNombre(),
                 producto.getDescripcion(),
                 producto.getPrecio(),
+                producto.getIva(),
                 producto.getDisponible(),
                 producto.getActivo()
         );

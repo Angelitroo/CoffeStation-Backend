@@ -18,4 +18,8 @@ public class CategoriaService {
     public List<Categoria> getAllCategorias(){
         return categoriaRepository.findAll();
     }
+
+    public List<Categoria> getAllCategoriasConProductosActivos(){
+        return categoriaRepository.findCategoriasConProductosActivos();
+    }
 }

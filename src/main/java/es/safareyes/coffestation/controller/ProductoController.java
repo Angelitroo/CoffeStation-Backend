@@ -5,10 +5,13 @@ import es.safareyes.coffestation.dto.ProductoDTOcrear;
 import es.safareyes.coffestation.model.Producto;
 import es.safareyes.coffestation.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/productos")
@@ -17,14 +20,19 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    @GetMapping
-    public ResponseEntity<List<ProductoDTO>> getAllProductos(){
-        return ResponseEntity.ok(productoService.getAllProductos());
-    }
+    @GetMapping()
+    public Page<Producto> getAllProductosFiltros(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) Boolean disponible,
+            @RequestParam(required = false) String alergeno,
+            @RequestParam(required = false) Boolean conAlergeno,
+            @RequestParam(required = false) BigDecimal precioMin,
+            @RequestParam(required = false) BigDecimal precioMax,
+            Pageable pageable) {
 
-    @GetMapping("/full")
-    public ResponseEntity<List<Producto>> getAllProductosFull(){
-        return ResponseEntity.ok(productoService.getAllProductosFull());
+        return productoService.getAllProductosFiltros(nombre, categoria, disponible,
+                alergeno, conAlergeno, precioMin, precioMax, pageable);
     }
 
     @GetMapping("/{id}")
@@ -45,6 +53,15 @@ public class ProductoController {
     @PatchMapping("/actualizar/disponibilidad/{id}")
     public ResponseEntity<ProductoDTO> updateProductoDisponibilidad(@PathVariable Long id, @RequestBody Boolean disponibilidad){
         return ResponseEntity.ok(productoService.updateProductoDisponibilidad(disponibilidad, id));
+    }
+
+    @DeleteMapping("eliminar/{id}")
+    public ResponseEntity<String> deleteProducto(@PathVariable Long id){
+        try {
+            return ResponseEntity.ok(productoService.deleteProducto(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
 

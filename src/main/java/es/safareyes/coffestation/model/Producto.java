@@ -28,6 +28,9 @@ public class Producto {
     @Column(name = "precio", nullable = false, precision = 8, scale = 2)
     private BigDecimal precio;
 
+    @Column(name = "iva", nullable = false, precision = 5, scale = 2)
+    private BigDecimal iva;
+
     @Column(name = "disponible", nullable = false)
     private Boolean disponible = true;
 

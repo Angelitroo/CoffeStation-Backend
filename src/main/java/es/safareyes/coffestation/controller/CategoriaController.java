@@ -21,4 +21,9 @@ public class CategoriaController {
     public ResponseEntity<List<Categoria>> getAllCategorias(){
         return ResponseEntity.ok(categoriaService.getAllCategorias());
     }
+
+    @GetMapping("/activas")
+    public ResponseEntity<List<Categoria>> getAllCategoriasConProductosActivos(){
+        return ResponseEntity.ok(categoriaService.getAllCategoriasConProductosActivos());
+    }
 }
