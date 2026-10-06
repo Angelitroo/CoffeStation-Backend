@@ -1,5 +1,6 @@
 package es.safareyes.coffestation.repository;
 
+import es.safareyes.coffestation.dto.ProductoRankingDTO;
 import es.safareyes.coffestation.dto.ResumenDiaDTO;
 import es.safareyes.coffestation.model.LineaPedido;
 import es.safareyes.coffestation.model.Producto;
@@ -31,12 +32,17 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
     ResumenDiaDTO getResumenDiaByFecha(LocalDate fecha);
 
     //Ranking de productos más vendidos
-    @Query(value = """
-            SELECT p.* FROM producto p
-            JOIN linea_pedido lp ON p.id = lp.id_producto
-            GROUP BY p.id
+    @Query("""
+            SELECT new es.safareyes.coffestation.dto.ProductoRankingDTO(
+                p.id,
+                p.nombre,
+                CAST(SUM(lp.cantidad) AS Integer)
+            )
+            FROM LineaPedido lp
+            JOIN lp.producto p
+            GROUP BY p.id, p.nombre
             ORDER BY SUM(lp.cantidad) DESC
-            """,
-            nativeQuery = true)
-    Page<Producto> findProductosMasVendidos(Pageable pageable);
+""")
+    Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable);
 }
+

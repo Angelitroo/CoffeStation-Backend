@@ -1,5 +1,6 @@
 package es.safareyes.coffestation.controller;
 
+import es.safareyes.coffestation.dto.ProductoRankingDTO;
 import es.safareyes.coffestation.dto.ResumenDiaDTO;
 import es.safareyes.coffestation.service.LineaPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 
@@ -20,5 +24,10 @@ public class LineaPedidoController {
     @GetMapping("/resumen/{fecha}")
     public ResponseEntity<ResumenDiaDTO> getResumenDiaByFecha(@PathVariable LocalDate fecha) {
         return ResponseEntity.ok(lineaPedidoService.getResumenDiaByFecha(fecha));
+    }
+
+    @GetMapping("/ranking")
+    public Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable) {
+        return lineaPedidoService.getProductosMasVendidos(pageable);
     }
 }

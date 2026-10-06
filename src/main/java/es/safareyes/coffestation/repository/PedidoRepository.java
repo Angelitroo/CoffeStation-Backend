@@ -14,7 +14,7 @@ import java.util.List;
 public interface PedidoRepository extends JpaRepository <Pedido, Long>, JpaSpecificationExecutor<Pedido> {
 
     //Saco el numero de usos
-    @Query("select count(p) from Pedido p where p.cupon.codigo = ?1")
+    @Query("select count(p) from Pedido p where p.cupon.codigo = :codigo")
     Integer findByCupon_Codigo(String codigo);
 
     /*
