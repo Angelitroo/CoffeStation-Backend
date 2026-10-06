@@ -2,9 +2,11 @@ package es.safareyes.coffestation.service;
 
 import es.safareyes.coffestation.dto.PedidoDTO;
 import es.safareyes.coffestation.enums.Estado;
+import es.safareyes.coffestation.model.Cupon;
 import es.safareyes.coffestation.model.Descuento;
 import es.safareyes.coffestation.model.LineaPedido;
 import es.safareyes.coffestation.model.Pedido;
+import es.safareyes.coffestation.repository.CuponRepository;
 import es.safareyes.coffestation.repository.DescuentoRepository;
 import es.safareyes.coffestation.repository.LineaPedidoRepository;
 import es.safareyes.coffestation.repository.PedidoRepository;
@@ -31,6 +33,9 @@ public class PedidoService {
     @Autowired
     private LineaPedidoRepository lineaPedidoRepository;
 
+    @Autowired
+    private CuponRepository cuponRepository;
+
     public Page<Pedido> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
         return pedidoRepository.findAll(
                 PedidoSpec.filtrosPedidos(fecha, estado), pageable);
@@ -40,19 +45,29 @@ public class PedidoService {
         return pedidoRepository.findById(id).orElse(null);
     }
 
-    public Pedido updatePedidoEstado(Long id, PedidoDTO pedidoDTO) {
+    public Pedido updatePedidoEstado(Long id, Estado estado) {
+        //Cogemos el pedido que queremos actualizar
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
-        Estado estadoNuevo = pedidoDTO.getEstado();
-        pedido.setEstado(estadoNuevo);
+        //Cogemos el nuevo valor del estado y seteamos
+        pedido.setEstado(estado);
+
         //Cancelar un pedido devuelve el uso al cupón aplicado.
-        if (estadoNuevo == Estado.CANCELADO && pedido.getCupon() != null) {
-            pedido.getCupon().setMaxUsos(pedidoDTO.getMaxUsos());
+        if (estado == Estado.CANCELADO && pedido.getCupon() != null) {
+            Cupon cupon = pedido.getCupon();
+            /*
+            Le sumamos el numero de usos a los que le quedaban:
+            Explicacion:Por ejemplo teniamos 10 usos maximos y hemos usado 3 lo que lo dejaria en 7,
+            pero como no sabemos el numero original lo que hacemos es "restaurar" el numero original
+             */
+
+            Integer usos = pedidoRepository.findByCupon_Codigo(cupon.getCodigo());
+            cupon.setMaxUsos(cupon.getMaxUsos() + usos);
         }
         return pedidoRepository.save(pedido);
     }
 
-    public Integer getPedidosByCupon(String codigo){
+    public Integer getUsosCupon(String codigo){
         return pedidoRepository.findByCupon_Codigo(codigo);
 
     }

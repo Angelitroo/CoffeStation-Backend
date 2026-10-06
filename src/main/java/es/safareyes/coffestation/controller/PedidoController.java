@@ -36,13 +36,13 @@ public class PedidoController {
     }
 
     @GetMapping("/cupon/{codigo}")
-    public Integer getPedidosByCodigo(@PathVariable String codigo){
-        return pedidoService.getPedidosByCupon(codigo);
+    public Integer getUsosCupon(@PathVariable String codigo){
+        return pedidoService.getUsosCupon(codigo);
     }
 
-    @PutMapping("/actualizar/{id}")
-    public Pedido updatePedidoEstado(@PathVariable Long id, @RequestBody PedidoDTO pedidoDTO){
-        return pedidoService.updatePedidoEstado(id, pedidoDTO);
+    @PutMapping("/actualizar/estado/{id}")
+    public Pedido updatePedidoEstado(@PathVariable Long id, @RequestBody Estado estado){
+        return pedidoService.updatePedidoEstado(id, estado);
     }
 
     @DeleteMapping("eliminar/{id}")
