@@ -36,6 +36,7 @@ public class PedidoService {
     @Autowired
     private CuponRepository cuponRepository;
 
+
     public Page<Pedido> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
         return pedidoRepository.findAll(
                 PedidoSpec.filtrosPedidos(fecha, estado), pageable);
@@ -44,6 +45,26 @@ public class PedidoService {
     public Pedido getPedidoById(Long id){
         return pedidoRepository.findById(id).orElse(null);
     }
+
+    public PedidoDTO createPedido(PedidoDTO pedidoDTO){
+        Pedido pedido = new Pedido();
+        pedido.setId(pedidoDTO.getId());
+        pedido.setFecha(LocalDateTime.now());
+        pedido.setNumeroTurno(pedidoDTO.getNumeroTurno());
+        pedido.setEstado(pedidoDTO.getEstado());
+
+        if (pedidoDTO.getCuponId() != null) {
+            Cupon cupon = cuponRepository.findById(pedidoDTO.getCuponId())
+                    .orElseThrow(() -> new IllegalArgumentException("Cupon no encontrado"));
+            cupon.setMaxUsos(cupon.getMaxUsos() - 1);
+            cuponRepository.save(cupon);
+            pedido.setCupon(cupon);
+        }
+
+        Pedido savedPedido = pedidoRepository.save(pedido);
+        return convertToDTO(savedPedido);
+    }
+
 
     public Pedido updatePedidoEstado(Long id, Estado estado) {
         //Cogemos el pedido que queremos actualizar
@@ -81,6 +102,16 @@ public class PedidoService {
 
         pedidoRepository.deleteById(id);
         return "Pedido Eliminado";
+    }
+
+    public PedidoDTO convertToDTO(Pedido pedido){
+        return new PedidoDTO(
+                pedido.getId(),
+                pedido.getFecha(),
+                pedido.getNumeroTurno(),
+                pedido.getEstado(),
+                pedido.getCupon() != null ? pedido.getCupon().getId() : null
+        );
     }
 
 }

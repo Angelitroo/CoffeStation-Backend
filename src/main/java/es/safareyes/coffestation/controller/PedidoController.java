@@ -40,6 +40,12 @@ public class PedidoController {
         return pedidoService.getUsosCupon(codigo);
     }
 
+    @PostMapping("/crear")
+    public ResponseEntity<PedidoDTO> createPedido(@RequestBody PedidoDTO pedidoDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.createPedido(pedidoDTO));
+    }
+
+
     @PutMapping("/actualizar/estado/{id}")
     public Pedido updatePedidoEstado(@PathVariable Long id, @RequestBody Estado estado){
         return pedidoService.updatePedidoEstado(id, estado);
