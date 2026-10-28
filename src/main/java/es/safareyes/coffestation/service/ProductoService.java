@@ -11,6 +11,7 @@ import es.safareyes.coffestation.repository.CategoriaRepository;
 import es.safareyes.coffestation.repository.LineaPedidoRepository;
 import es.safareyes.coffestation.repository.ProductoRepository;
 import es.safareyes.coffestation.specifications.ProductoSpec;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,18 +24,15 @@ import java.util.List;
 
 @Service
 @Validated
+@AllArgsConstructor
 public class ProductoService {
 
-    @Autowired
     private ProductoRepository productoRepository;
 
-    @Autowired
     private CategoriaRepository categoriaRepository;
 
-    @Autowired
     private AlergenoRepository alergenoRepository;
 
-    @Autowired
     private LineaPedidoRepository lineaPedidoRepository;
 
     public Page<ProductoDTO> getAllProductosFiltros(String nombre, String categoriaNombre,

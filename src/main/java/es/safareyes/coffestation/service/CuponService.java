@@ -4,6 +4,7 @@ import es.safareyes.coffestation.dto.CuponValidarDTO;
 import es.safareyes.coffestation.model.Cupon;
 import es.safareyes.coffestation.repository.CuponRepository;
 import es.safareyes.coffestation.repository.PedidoRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -13,11 +14,11 @@ import java.util.List;
 
 @Service
 @Validated
+@AllArgsConstructor
 public class CuponService {
-    @Autowired
+
     private CuponRepository cuponRepository;
 
-    @Autowired
     private PedidoRepository pedidoRepository;
 
     public List<Cupon> getAllCupones() {

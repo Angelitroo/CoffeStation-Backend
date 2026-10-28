@@ -2,6 +2,7 @@ package es.safareyes.coffestation.controller;
 
 import es.safareyes.coffestation.model.Categoria;
 import es.safareyes.coffestation.service.CategoriaService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
+@AllArgsConstructor
 public class CategoriaController {
 
-    @Autowired
     private CategoriaService categoriaService;
 
     @GetMapping

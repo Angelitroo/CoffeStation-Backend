@@ -4,6 +4,7 @@ import es.safareyes.coffestation.dto.ProductoDTO;
 import es.safareyes.coffestation.dto.ProductoDTOcrear;
 import es.safareyes.coffestation.model.Producto;
 import es.safareyes.coffestation.service.ProductoService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +16,9 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/productos")
+@AllArgsConstructor
 public class ProductoController {
 
-    @Autowired
     private ProductoService productoService;
 
     @GetMapping()

@@ -3,6 +3,7 @@ package es.safareyes.coffestation.controller;
 import es.safareyes.coffestation.dto.CuponValidarDTO;
 import es.safareyes.coffestation.model.Cupon;
 import es.safareyes.coffestation.service.CuponService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,8 +14,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cupones")
+@AllArgsConstructor
 public class CuponController {
-    @Autowired
+
     private CuponService cuponService;
 
     @GetMapping

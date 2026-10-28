@@ -11,6 +11,7 @@ import es.safareyes.coffestation.repository.DescuentoRepository;
 import es.safareyes.coffestation.repository.LineaPedidoRepository;
 import es.safareyes.coffestation.repository.PedidoRepository;
 import es.safareyes.coffestation.specifications.PedidoSpec;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,18 +23,15 @@ import java.util.List;
 
 @Service
 @Validated
+@AllArgsConstructor
 public class PedidoService {
 
-    @Autowired
     private PedidoRepository pedidoRepository;
 
-    @Autowired
     private DescuentoRepository descuentoRepository;
 
-    @Autowired
     private LineaPedidoRepository lineaPedidoRepository;
 
-    @Autowired
     private CuponRepository cuponRepository;
 
 

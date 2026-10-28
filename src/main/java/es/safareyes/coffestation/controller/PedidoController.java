@@ -3,6 +3,7 @@ import es.safareyes.coffestation.dto.PedidoDTO;
 import es.safareyes.coffestation.enums.Estado;
 import es.safareyes.coffestation.model.Pedido;
 import es.safareyes.coffestation.service.PedidoService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +16,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/pedidos")
+@AllArgsConstructor
 public class PedidoController {
 
-    @Autowired
     private PedidoService pedidoService;
 
     @GetMapping

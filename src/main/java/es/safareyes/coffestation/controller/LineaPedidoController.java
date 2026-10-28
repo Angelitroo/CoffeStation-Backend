@@ -3,6 +3,7 @@ package es.safareyes.coffestation.controller;
 import es.safareyes.coffestation.dto.ProductoRankingDTO;
 import es.safareyes.coffestation.dto.ResumenDiaDTO;
 import es.safareyes.coffestation.service.LineaPedidoService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +18,9 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/informe")
+@AllArgsConstructor
 public class LineaPedidoController {
-    @Autowired
+
     private LineaPedidoService lineaPedidoService;
 
     @GetMapping("/resumen/{fecha}")
