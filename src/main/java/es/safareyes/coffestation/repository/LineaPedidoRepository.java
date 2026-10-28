@@ -17,6 +17,7 @@ import java.util.List;
 public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long> {
 
     //Resumen del dia
+    //http://localhost:8080/informe/resumen/2026-09-28
     @Query("""
     SELECT new es.safareyes.coffestation.dto.ResumenDiaDTO(
             /*Fecha*/         CAST(:fecha AS LocalDate),
@@ -33,6 +34,7 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
     ResumenDiaDTO getResumenDiaByFecha(LocalDate fecha);
 
     //Ranking de productos más vendidos
+    //http://localhost:8080/informe/ranking
     @Query("""
             SELECT new es.safareyes.coffestation.dto.ProductoRankingDTO(
                 p.id,

@@ -15,7 +15,7 @@ public interface PedidoRepository extends JpaRepository <Pedido, Long>, JpaSpeci
 
     //Saco el numero de usos
     @Query("select count(p) from Pedido p where p.cupon.codigo = :codigo")
-    Integer findByCupon_Codigo(String codigo);
+    Integer findUsosCupon(String codigo);
 
     /*
     //Listado paginado por estado y fecha; un cliente solo ve los suyos

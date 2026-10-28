@@ -10,10 +10,9 @@ import java.util.List;
 @Repository
 public interface CategoriaRepository extends JpaRepository <Categoria, Long> {
 
-    //Categorías con número de productos activos
-    @Query(value = "SELECT DISTINCT c.* FROM categoria c " +
-            "INNER JOIN producto p ON c.id = p.id_categoria " +
-            "WHERE p.activo = true", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM categoria c " +
+            "WHERE c.id IN (SELECT DISTINCT p.id_categoria FROM producto p WHERE p.activo = true)",
+            nativeQuery = true)
     List<Categoria> findCategoriasConProductosActivos();
 
 }

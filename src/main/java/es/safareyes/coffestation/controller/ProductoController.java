@@ -21,7 +21,7 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping()
-    public Page<Producto> getAllProductosFiltros(
+    public Page<ProductoDTO> getAllProductosFiltros(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String categoria,
             @RequestParam(required = false) Boolean disponible,
@@ -63,6 +63,4 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
-
 }

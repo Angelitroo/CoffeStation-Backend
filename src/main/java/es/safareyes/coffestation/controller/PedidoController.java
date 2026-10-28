@@ -21,7 +21,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @GetMapping
-    public Page<Pedido> getAllPedidos(
+    public Page<PedidoDTO> getAllPedidos(
             @RequestParam(required = false) LocalDateTime fecha,
             @RequestParam(required = false) Estado estado,
             Pageable pageable)

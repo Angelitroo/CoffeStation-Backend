@@ -37,9 +37,9 @@ public class PedidoService {
     private CuponRepository cuponRepository;
 
 
-    public Page<Pedido> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
+    public Page<PedidoDTO> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
         return pedidoRepository.findAll(
-                PedidoSpec.filtrosPedidos(fecha, estado), pageable);
+                PedidoSpec.filtrosPedidos(fecha, estado), pageable).map(this::convertToDTO);
     }
 
     public Pedido getPedidoById(Long id){
@@ -84,14 +84,14 @@ public class PedidoService {
             pero como no sabemos el numero original lo que hacemos es "restaurar" el numero original
              */
 
-            Integer usos = pedidoRepository.findByCupon_Codigo(cupon.getCodigo());
+            Integer usos = pedidoRepository.findUsosCupon(cupon.getCodigo());
             cupon.setMaxUsos(cupon.getMaxUsos() + usos);
         }
         return pedidoRepository.save(pedido);
     }
 
     public Integer getUsosCupon(String codigo){
-        return pedidoRepository.findByCupon_Codigo(codigo);
+        return pedidoRepository.findUsosCupon(codigo);
 
     }
 

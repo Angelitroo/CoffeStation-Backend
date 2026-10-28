@@ -40,7 +40,7 @@ public class CuponService {
         cuponValidarDTO.setMaxUsos(cupon.getMaxUsos());
         cuponValidarDTO.setFechaFin(cupon.getFechaFin());
 
-        Integer usos = pedidoRepository.findByCupon_Codigo(codigo);
+        Integer usos = pedidoRepository.findUsosCupon(codigo);
 
         if (codigo != null &&
                 cuponValidarDTO.getMaxUsos() > usos &&

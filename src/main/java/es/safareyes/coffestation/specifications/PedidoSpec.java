@@ -21,11 +21,13 @@ public final class PedidoSpec {
             List<Predicate> filtros = new ArrayList<>();
 
             //Busqueda por fecha
+            //http://localhost:8080/pedidos?fecha=2026-09-23T11:10:00
             if(fecha != null){
                 filtros.add(cb.equal(root.get("fecha"), fecha));
             }
 
             //Busqueda por estado
+            //http://localhost:8080/pedidos?estado=PENDIENTE
             if(estado != null){
                 filtros.add(cb.equal(root.get("estado"), estado));
             }
