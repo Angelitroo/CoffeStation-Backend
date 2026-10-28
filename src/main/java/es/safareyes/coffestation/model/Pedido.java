@@ -29,7 +29,7 @@ public class Pedido {
     @Column(name = "estado", nullable = false)
     private Estado estado = Estado.PENDIENTE;
 
-    @ManyToOne
+    @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_cupon")
     private Cupon cupon;
 

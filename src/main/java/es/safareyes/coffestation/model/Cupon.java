@@ -42,7 +42,7 @@ public class Cupon {
     @Column(name = "importe_minimo", precision = 8, scale = 2)
     private BigDecimal importeMinimo;
 
-    @ManyToOne
+    @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 

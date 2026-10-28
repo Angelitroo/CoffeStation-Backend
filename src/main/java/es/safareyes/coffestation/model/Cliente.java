@@ -25,7 +25,7 @@ public class Cliente {
     @Column(name = "dni", nullable = false, unique = true, length = 9)
     private String dni;
 
-    @ManyToOne
+    @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 

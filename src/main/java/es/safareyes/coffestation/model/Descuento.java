@@ -24,7 +24,7 @@ public class Descuento {
     @Column(name = "origen", nullable = false, length = 50)
     private String origen;
 
-    @ManyToOne
+    @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_pedido", nullable = false)
     private Pedido pedido;
 

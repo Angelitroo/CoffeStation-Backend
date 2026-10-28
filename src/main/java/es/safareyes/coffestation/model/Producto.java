@@ -37,12 +37,12 @@ public class Producto {
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
-    @ManyToOne
+    @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_categoria", nullable = false)
     private Categoria categoria;
 
 
-    @ManyToMany
+    @ManyToMany(fetch =  FetchType.LAZY)
     @JoinTable(
             name = "producto_alergeno",
             joinColumns = @JoinColumn(name = "id_producto"),
