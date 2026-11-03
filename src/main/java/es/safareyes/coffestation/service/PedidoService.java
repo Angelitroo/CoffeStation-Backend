@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,8 +49,14 @@ public class PedidoService {
         Pedido pedido = new Pedido();
         pedido.setId(pedidoDTO.getId());
         pedido.setFecha(LocalDateTime.now());
-        pedido.setNumeroTurno(pedidoDTO.getNumeroTurno());
         pedido.setEstado(pedidoDTO.getEstado());
+
+        //El número de turno es el número de pedidos creados ese día más uno.
+        Long numeroPedidosL = pedidoRepository.getPedidosByFecha(LocalDate.now());
+
+        //Convierto de Long a Integer
+        Integer numeroPedidosI = numeroPedidosL.intValue();
+        pedido.setNumeroTurno(numeroPedidosI + 1);
 
         //Primero vemos si se usa cupon o no
         if (pedidoDTO.getCuponId() != null) {
