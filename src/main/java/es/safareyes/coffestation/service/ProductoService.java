@@ -39,11 +39,12 @@ public class ProductoService {
                                                  Boolean disponible, String nombreAlergeno, Boolean conAlergeno,
                                                  BigDecimal precioMinimo, BigDecimal precioMaximo, Pageable pageable) {
 
-        return productoRepository.findAll(
+        Page<Producto> productos = productoRepository.findAll(
                 ProductoSpec.filtrosProductos(nombre, categoriaNombre, disponible,
                         nombreAlergeno, conAlergeno, precioMinimo, precioMaximo),
                 pageable
-        ).map(this::convertToDTO);
+        );
+        return productos.map(this::convertToDTO);
     }
     
 

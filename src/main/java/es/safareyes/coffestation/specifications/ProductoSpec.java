@@ -24,6 +24,11 @@ public final class ProductoSpec {
         return (root, query, cb) -> {
             List<Predicate> filtros = new ArrayList<>();
 
+            //Solo productos activos quitamos los que estan dados de baja
+            filtros.add(cb.isTrue(root.get("activo")));
+            //Si quisieramos no mostrar los disponibilidad false
+            //filtros.add(cb.isTrue(root.get("disponibilidad")));
+
             //Busqueda por nombre
             //http://localhost:8080/productos?nombre=café
             if(nombre != null && !nombre.isBlank()){
@@ -73,9 +78,6 @@ public final class ProductoSpec {
             if(precioMaximo != null){
                 filtros.add(cb.le(root.get("precio"), precioMaximo));
             }
-
-
-            if(filtros.isEmpty()) return null;
 
             return cb.and(filtros.toArray(new Predicate[0]));
         };
