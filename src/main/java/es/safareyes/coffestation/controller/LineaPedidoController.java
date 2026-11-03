@@ -25,7 +25,7 @@ public class LineaPedidoController {
 
     private LineaPedidoService lineaPedidoService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'BARISTA')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/resumen/{fecha}")
     public ResponseEntity<ResumenDiaDTO> getResumenDiaByFecha(@PathVariable LocalDate fecha) {
         return ResponseEntity.ok(lineaPedidoService.getResumenDiaByFecha(fecha));

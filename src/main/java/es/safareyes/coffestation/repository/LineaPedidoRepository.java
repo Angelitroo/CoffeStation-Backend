@@ -16,6 +16,8 @@ import java.util.List;
 @Repository
 public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long> {
 
+    //Los informes de ventas solo cuentan pedidos ENTREGADO .
+
     //Resumen del dia
     //http://localhost:8080/informe/resumen/2026-09-28
     @Query("""
@@ -29,6 +31,7 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
         JOIN l.pedido p
         JOIN l.producto pr
         WHERE CAST(p.fecha AS LocalDate) = :fecha
+            AND p.estado = 'ENTREGADO'
 
 """)
     ResumenDiaDTO getResumenDiaByFecha(LocalDate fecha);
@@ -45,7 +48,8 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
             JOIN lp.producto pr
             JOIN lp.pedido p
             WHERE CAST(p.fecha AS LocalDate) BETWEEN :fechaMinima AND :fechaMaxima
-                                                               
+                AND p.estado = 'ENTREGADO'
+                                                                   
             GROUP BY pr.id, pr.nombre
             ORDER BY SUM(lp.cantidad) DESC
 """)
