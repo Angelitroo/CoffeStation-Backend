@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/informe")
@@ -24,6 +25,7 @@ public class LineaPedidoController {
 
     private LineaPedidoService lineaPedidoService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'BARISTA')")
     @GetMapping("/resumen/{fecha}")
     public ResponseEntity<ResumenDiaDTO> getResumenDiaByFecha(@PathVariable LocalDate fecha) {
         return ResponseEntity.ok(lineaPedidoService.getResumenDiaByFecha(fecha));
@@ -31,7 +33,7 @@ public class LineaPedidoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ranking")
-    public Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable) {
-        return lineaPedidoService.getProductosMasVendidos(pageable);
+    public List<ProductoRankingDTO> getProductosMasVendidos(LocalDate fechaMinima, LocalDate fechaMaxima) {
+        return lineaPedidoService.getProductosMasVendidos(fechaMinima,fechaMaxima);
     }
 }

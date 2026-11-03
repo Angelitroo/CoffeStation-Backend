@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +23,7 @@ public class LineaPedidoService {
         return lineaPedidoRepository.getResumenDiaByFecha(fecha);
     }
 
-    public Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable) {
-        return lineaPedidoRepository.getProductosMasVendidos(pageable);
+    public List<ProductoRankingDTO> getProductosMasVendidos(LocalDate fechaMinima, LocalDate fechaMaxima) {
+        return lineaPedidoRepository.getProductosMasVendidos(fechaMinima, fechaMaxima);
     }
 }

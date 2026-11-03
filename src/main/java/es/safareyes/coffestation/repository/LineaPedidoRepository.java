@@ -37,16 +37,19 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
     //http://localhost:8080/informe/ranking
     @Query("""
             SELECT new es.safareyes.coffestation.dto.ProductoRankingDTO(
-                p.id,
-                p.nombre,
+                pr.id,
+                pr.nombre,
                 CAST(SUM(lp.cantidad) AS Integer)
             )
             FROM LineaPedido lp
-            JOIN lp.producto p
-            GROUP BY p.id, p.nombre
+            JOIN lp.producto pr
+            JOIN lp.pedido p
+            WHERE CAST(p.fecha AS LocalDate) BETWEEN :fechaMinima AND :fechaMaxima
+                                                               
+            GROUP BY pr.id, pr.nombre
             ORDER BY SUM(lp.cantidad) DESC
 """)
-    Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable);
+    List<ProductoRankingDTO> getProductosMasVendidos(LocalDate fechaMinima, LocalDate fechaMaxima);
 
     //Para eliminar producto primero eliminar relacion linea_pedido
     List<LineaPedido> findAllByProductoId(Long id);
