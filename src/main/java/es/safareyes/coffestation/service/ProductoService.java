@@ -46,10 +46,21 @@ public class ProductoService {
         );
         return productos.map(this::convertToDTO);
     }
-    
+
 
     public Producto getProductoById(Long id){
-        return productoRepository.findById(id).orElse(null);
+        //Falta que devuelva el 422
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Producto " + id + " no existe"));
+
+        if(p.getActivo().equals(false)){
+            throw new IllegalArgumentException("Producto " + p.getId() + " (" + p.getNombre() + ") está dado de baja");
+        }
+        if(p.getDisponible().equals(false)){
+            throw new IllegalArgumentException("Producto " + p.getId() + " (" + p.getNombre() + ") está agotado");
+        }
+
+        return p;
     }
 
     public ProductoDTO createProducto(ProductoDTOcrear productoDTO){
