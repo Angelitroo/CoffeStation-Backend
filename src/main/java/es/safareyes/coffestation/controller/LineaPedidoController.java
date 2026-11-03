@@ -6,6 +6,7 @@ import es.safareyes.coffestation.service.LineaPedidoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class LineaPedidoController {
         return ResponseEntity.ok(lineaPedidoService.getResumenDiaByFecha(fecha));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ranking")
     public Page<ProductoRankingDTO> getProductosMasVendidos(Pageable pageable) {
         return lineaPedidoService.getProductosMasVendidos(pageable);

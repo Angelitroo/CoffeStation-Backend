@@ -45,41 +45,7 @@ public class ProductoService {
                 pageable
         ).map(this::convertToDTO);
     }
-
-    public Page<ProductoDTO> getProductosPorNombre(String nombre, Pageable pageable) {
-        return productoRepository.findAll(
-                ProductoSpec.filtrosProductos(nombre, null, null, null, null, null, null),
-                pageable
-        ).map(this::convertToDTO);
-    }
-
-    public Page<ProductoDTO> getProductosPorCategoria(String categoriaNombre, Pageable pageable) {
-        return productoRepository.findAll(
-                ProductoSpec.filtrosProductos(null, categoriaNombre, null, null, null, null, null),
-                pageable
-        ).map(this::convertToDTO);
-    }
-
-    public Page<ProductoDTO> getProductosPorDisponibilidad(Boolean disponible, Pageable pageable) {
-        return productoRepository.findAll(
-                ProductoSpec.filtrosProductos(null, null, disponible, null, null, null, null),
-                pageable
-        ).map(this::convertToDTO);
-    }
-
-    public Page<ProductoDTO> getProductosPorAlergeno(String nombreAlergeno, Boolean conAlergeno, Pageable pageable) {
-        return productoRepository.findAll(
-                ProductoSpec.filtrosProductos(null, null, null, nombreAlergeno, conAlergeno, null, null),
-                pageable
-        ).map(this::convertToDTO);
-    }
-
-    public Page<ProductoDTO> getProductosPorRangoPrecio(BigDecimal precioMinimo, BigDecimal precioMaximo, Pageable pageable) {
-        return productoRepository.findAll(
-                ProductoSpec.filtrosProductos(null, null, null, null, null, precioMinimo, precioMaximo),
-                pageable
-        ).map(this::convertToDTO);
-    }
+    
 
     public Producto getProductoById(Long id){
         return productoRepository.findById(id).orElse(null);
