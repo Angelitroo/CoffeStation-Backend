@@ -16,8 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import static  es.safareyes.coffestation.specifications.ProductoSpec.*;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,11 +57,13 @@ public class ProductoService {
         Producto p = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto " + id + " no existe"));
 
-        if(p.getActivo().equals(false)){
-            throw new IllegalArgumentException("Producto " + p.getId() + " (" + p.getNombre() + ") está dado de baja");
+        if (!p.getActivo()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
+                    "Producto " + p.getId() + " (" + p.getNombre() + ") está dado de baja");
         }
-        if(p.getDisponible().equals(false)){
-            throw new IllegalArgumentException("Producto " + p.getId() + " (" + p.getNombre() + ") está agotado");
+        if (!p.getDisponible()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
+                    "Producto " + p.getId() + " (" + p.getNombre() + ") está agotado");
         }
 
         return p;
