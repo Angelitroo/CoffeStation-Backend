@@ -73,10 +73,10 @@ public final class ProductoSpec {
             //http://localhost:8080/productos?precioMax=10.00
             //http://localhost:8080/productos?precioMin=5.00&precioMax=15.00
             if(precioMinimo != null){
-                filtros.add(cb.ge(root.get("precio"), precioMinimo));
+                filtros.add(cb.ge(root.get("precioSinIva"), precioMinimo));
             }
             if(precioMaximo != null){
-                filtros.add(cb.le(root.get("precio"), precioMaximo));
+                filtros.add(cb.le(root.get("precioSinIva"), precioMaximo));
             }
 
             return cb.and(filtros.toArray(new Predicate[0]));

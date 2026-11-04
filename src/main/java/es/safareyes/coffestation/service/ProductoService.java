@@ -2,6 +2,8 @@ package es.safareyes.coffestation.service;
 
 import es.safareyes.coffestation.dto.ProductoDTO;
 import es.safareyes.coffestation.dto.ProductoDTOcrear;
+import es.safareyes.coffestation.exceptions.RecursoNoEncontradoException;
+import es.safareyes.coffestation.exceptions.ReglaNegocioException;
 import es.safareyes.coffestation.model.Alergeno;
 import es.safareyes.coffestation.model.Categoria;
 import es.safareyes.coffestation.model.LineaPedido;
@@ -58,12 +60,10 @@ public class ProductoService {
                 .orElseThrow(() -> new IllegalArgumentException("Producto " + id + " no existe"));
 
         if (!p.getActivo()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
-                    "Producto " + p.getId() + " (" + p.getNombre() + ") está dado de baja");
+            throw new ReglaNegocioException("Producto " + p.getId() + " (" + p.getNombre() + ") está dado de baja");
         }
         if (!p.getDisponible()) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
-                    "Producto " + p.getId() + " (" + p.getNombre() + ") está agotado");
+            throw new ReglaNegocioException("Producto " + p.getId() + " (" + p.getNombre() + ") está agotado");
         }
 
         return p;
@@ -74,13 +74,13 @@ public class ProductoService {
         producto.setId(productoDTO.getId());
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setPrecio(productoDTO.getPrecio());
+        producto.setPrecioSinIva(productoDTO.getPrecio());
         producto.setIva(productoDTO.getIva());
         producto.setDisponible(productoDTO.getDisponible());
         producto.setActivo(productoDTO.getActivo());
 
         Categoria categoria = categoriaRepository.findById(productoDTO.getCategoriaId())
-                .orElseThrow(() -> new IllegalArgumentException("Categoria no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Categoria no encontrada"));
         producto.setCategoria(categoria);
 
         List<Alergeno> alergenos = alergenoRepository.findAllById(productoDTO.getAlergenosIds());
@@ -99,7 +99,7 @@ public class ProductoService {
 
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setPrecio(productoDTO.getPrecio());
+        producto.setPrecioSinIva(productoDTO.getPrecioSinIva());
         producto.setIva(productoDTO.getIva());
         producto.setDisponible(productoDTO.getDisponible());
         producto.setActivo(productoDTO.getActivo());
@@ -132,7 +132,7 @@ public class ProductoService {
                 producto.getId(),
                 producto.getNombre(),
                 producto.getDescripcion(),
-                producto.getPrecio(),
+                producto.getPrecioSinIva(),
                 producto.getIva(),
                 producto.getDisponible(),
                 producto.getActivo()

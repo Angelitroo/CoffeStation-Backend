@@ -50,6 +50,9 @@ public class PedidoService {
         pedido.setId(pedidoDTO.getId());
         pedido.setFecha(LocalDateTime.now());
         pedido.setEstado(pedidoDTO.getEstado());
+        pedido.setBaseImponible(pedidoDTO.getBaseImponible());
+        pedido.setSubtotal(pedidoDTO.getSubtotal());
+        pedido.setTotal(pedidoDTO.getTotal());
 
         //El número de turno es el número de pedidos creados ese día más uno.
         Long numeroPedidosL = pedidoRepository.getPedidosByFecha(LocalDate.now());
@@ -116,6 +119,9 @@ public class PedidoService {
                 pedido.getId(),
                 pedido.getFecha(),
                 pedido.getNumeroTurno(),
+                pedido.getBaseImponible(),
+                pedido.getSubtotal(),
+                pedido.getTotal(),
                 pedido.getEstado(),
                 pedido.getCupon() != null ? pedido.getCupon().getId() : null
         );

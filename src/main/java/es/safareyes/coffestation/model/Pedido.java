@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,6 +26,15 @@ public class Pedido {
     @Column(name = "numero_turno", nullable = false)
     private Integer numeroTurno;
 
+    @Column(name = "base_imponible", nullable = false, precision = 8, scale = 2)
+    private BigDecimal baseImponible;
+
+    @Column(name = "subtotal", nullable = false, precision = 8, scale = 2)
+    private BigDecimal subtotal;
+
+    @Column(name = "total", nullable = false, precision = 8, scale = 2)
+    private BigDecimal total;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private Estado estado = Estado.PENDIENTE;
@@ -32,5 +42,7 @@ public class Pedido {
     @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "id_cupon")
     private Cupon cupon;
+
+
 
 }

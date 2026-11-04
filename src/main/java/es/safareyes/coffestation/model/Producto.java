@@ -25,8 +25,8 @@ public class Producto {
     @Column(name = "descripcion", length = 150)
     private String descripcion;
 
-    @Column(name = "precio", nullable = false, precision = 8, scale = 2)
-    private BigDecimal precio;
+    @Column(name = "precio_sin_iva", nullable = false, precision = 8, scale = 2)
+    private BigDecimal precioSinIva;
 
     @Column(name = "iva", nullable = false, precision = 5, scale = 2)
     private BigDecimal iva;

@@ -29,7 +29,14 @@ public class LineaPedido {
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
-    @Column(name = "precio_unitario", nullable = false, precision = 8, scale = 2)
-    private BigDecimal precioUnitario;
+    @Column(name = "precio_sin_iva", nullable = false, precision = 8, scale = 2)
+    private BigDecimal precioSinIva;
+
+    @Column(name = "iva", nullable = false, precision = 5, scale = 2)
+    private BigDecimal iva;
+
+    @Column(name = "total", nullable = false, precision = 8, scale = 2)
+    private BigDecimal total;
+
 
 }

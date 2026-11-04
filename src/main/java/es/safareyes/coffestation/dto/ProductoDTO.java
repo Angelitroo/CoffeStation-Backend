@@ -14,7 +14,7 @@ public class ProductoDTO {
     private Long id;
     private String nombre;
     private String descripcion;
-    private BigDecimal precio;
+    private BigDecimal precioSinIva;
     private BigDecimal iva;
     private Boolean disponible;
     private Boolean activo;

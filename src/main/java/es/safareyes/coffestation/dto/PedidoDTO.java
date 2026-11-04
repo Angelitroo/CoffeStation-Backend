@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,6 +15,9 @@ public class PedidoDTO {
     private Long id;
     private LocalDateTime fecha;
     private Integer numeroTurno;
+    private BigDecimal baseImponible;
+    private BigDecimal subtotal;
+    private BigDecimal total;
     private Estado estado;
     private Long cuponId;
 }
