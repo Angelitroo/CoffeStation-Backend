@@ -1,11 +1,14 @@
 package es.safareyes.coffestation.service;
 
+import es.safareyes.coffestation.dto.CuponDTO;
 import es.safareyes.coffestation.dto.CuponValidarDTO;
+import es.safareyes.coffestation.exceptions.RecursoNoEncontradoException;
+import es.safareyes.coffestation.model.Cliente;
 import es.safareyes.coffestation.model.Cupon;
+import es.safareyes.coffestation.repository.ClienteRepository;
 import es.safareyes.coffestation.repository.CuponRepository;
 import es.safareyes.coffestation.repository.PedidoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,12 +24,39 @@ public class CuponService {
 
     private PedidoRepository pedidoRepository;
 
-    public List<Cupon> getAllCupones() {
-        return cuponRepository.findAll();
+    private ClienteRepository clienteRepository;
+
+    public List<CuponDTO> getAllCupones() {
+        return cuponRepository.findAll().stream().map(this::convertToDTO).toList();
     }
 
-    public Cupon getCuponById(Long id) {
-        return cuponRepository.findById(id).orElse(null);
+    public CuponDTO getCuponById(Long id) {
+        Cupon cupon = cuponRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + id));
+        return convertToDTO(cupon);
+    }
+
+    public CuponDTO getCuponByCodigo(String codigo) {
+        Cupon cupon = cuponRepository.findCuponByCodigo(codigo)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));
+        return convertToDTO(cupon);
+    }
+
+    public CuponDTO createCupon(CuponDTO dto) {
+        Cupon cupon = new Cupon();
+        cupon.setCodigo(dto.getCodigo());
+        cupon.setTipo(dto.getTipo());
+        cupon.setValor(dto.getValor());
+        cupon.setFechaInicio(dto.getFechaInicio());
+        cupon.setFechaFin(dto.getFechaFin());
+        cupon.setMaxUsos(dto.getMaxUsos());
+        cupon.setImporteMinimo(dto.getImporteMinimo());
+
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente " + dto.getClienteId() + " no existe"));
+        cupon.setCliente(cliente);
+
+        return convertToDTO(cuponRepository.save(cupon));
     }
 
     /*
@@ -35,7 +65,8 @@ public class CuponService {
     si es personal,el email coincide con el del cliente.
     */
     public CuponValidarDTO validarCupon(String codigo) {
-        Cupon cupon = cuponRepository.findCuponByCodigo(codigo);
+        Cupon cupon = cuponRepository.findCuponByCodigo(codigo)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));
         CuponValidarDTO cuponValidarDTO = new CuponValidarDTO();
         cuponValidarDTO.setCodigo(codigo);
         cuponValidarDTO.setMaxUsos(cupon.getMaxUsos());
@@ -52,4 +83,18 @@ public class CuponService {
 
         return cuponValidarDTO;
     }
+
+    public CuponDTO convertToDTO(Cupon cupon) {
+        return new CuponDTO(
+                cupon.getCodigo(),
+                cupon.getTipo(),
+                cupon.getValor(),
+                cupon.getFechaInicio(),
+                cupon.getFechaFin(),
+                cupon.getMaxUsos(),
+                cupon.getImporteMinimo(),
+                cupon.getCliente() != null ? cupon.getCliente().getId() : null
+        );
+    }
+
 }
