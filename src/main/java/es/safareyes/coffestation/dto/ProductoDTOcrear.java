@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductoDTOcrear {
-    private Long id;
     private String nombre;
     private String descripcion;
     private BigDecimal precio;

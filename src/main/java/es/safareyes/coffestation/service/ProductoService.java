@@ -2,6 +2,7 @@ package es.safareyes.coffestation.service;
 
 import es.safareyes.coffestation.dto.ProductoDTO;
 import es.safareyes.coffestation.dto.ProductoDTOcrear;
+import es.safareyes.coffestation.exceptions.ConflictoException;
 import es.safareyes.coffestation.exceptions.RecursoNoEncontradoException;
 import es.safareyes.coffestation.exceptions.ReglaNegocioException;
 import es.safareyes.coffestation.model.Alergeno;
@@ -55,7 +56,6 @@ public class ProductoService {
 
 
     public Producto getProductoById(Long id){
-        //Falta que devuelva el 422
         Producto p = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto " + id + " no existe"));
 
@@ -71,7 +71,6 @@ public class ProductoService {
 
     public ProductoDTO createProducto(ProductoDTOcrear productoDTO){
         Producto producto = new Producto();
-        producto.setId(productoDTO.getId());
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
         producto.setPrecioSinIva(productoDTO.getPrecio());
@@ -85,7 +84,7 @@ public class ProductoService {
 
         List<Alergeno> alergenos = alergenoRepository.findAllById(productoDTO.getAlergenosIds());
         if (alergenos.size() != productoDTO.getAlergenosIds().size()) {
-            throw new IllegalArgumentException("Uno o más IDs de alérgenos no son válidos");
+            throw new ConflictoException("Uno o más IDs de alérgenos no son válidos");
         }
         producto.setAlergeno(alergenos);
 
@@ -129,7 +128,6 @@ public class ProductoService {
 
     public ProductoDTO convertToDTO(Producto producto) {
         return new ProductoDTO(
-                producto.getId(),
                 producto.getNombre(),
                 producto.getDescripcion(),
                 producto.getPrecioSinIva(),

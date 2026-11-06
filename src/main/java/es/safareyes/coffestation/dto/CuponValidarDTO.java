@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
     si es personal,el email coincide con el del cliente.
 */
 public class CuponValidarDTO {
-    private Long id;
     private String codigo;
     private LocalDateTime fechaFin;
     private Integer maxUsos;

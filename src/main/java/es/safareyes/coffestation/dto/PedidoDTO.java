@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PedidoDTO {
-    private Long id;
     private LocalDateTime fecha;
     private Integer numeroTurno;
     private BigDecimal baseImponible;

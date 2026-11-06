@@ -28,7 +28,7 @@ public class AuthController {
         return new TokenDTO(jwtService.generarToken(auth));
     }
 
-    @PostMapping("/registro")
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registro(@Valid @RequestBody LoginDTO dto) {
         usuarioService.registrarCliente(dto.getNombre(), dto.getPassword());

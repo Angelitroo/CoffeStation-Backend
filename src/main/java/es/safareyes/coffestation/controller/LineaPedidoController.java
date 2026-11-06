@@ -1,5 +1,7 @@
 package es.safareyes.coffestation.controller;
 
+import es.safareyes.coffestation.dto.LineaPedidoDTO;
+import es.safareyes.coffestation.dto.LineaPedidoDTOCrear;
 import es.safareyes.coffestation.dto.ProductoRankingDTO;
 import es.safareyes.coffestation.dto.ResumenDiaDTO;
 import es.safareyes.coffestation.service.LineaPedidoService;
@@ -7,10 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +34,11 @@ public class LineaPedidoController {
     @GetMapping("/ranking")
     public List<ProductoRankingDTO> getProductosMasVendidos(LocalDate fechaMinima, LocalDate fechaMaxima) {
         return lineaPedidoService.getProductosMasVendidos(fechaMinima,fechaMaxima);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/crear")
+    public LineaPedidoDTO createLineaPedido(@RequestBody LineaPedidoDTOCrear dto) {
+        return lineaPedidoService.createLineaPedido(dto);
     }
 }

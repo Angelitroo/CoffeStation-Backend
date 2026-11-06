@@ -47,7 +47,6 @@ public class PedidoService {
 
     public PedidoDTO createPedido(PedidoDTO pedidoDTO){
         Pedido pedido = new Pedido();
-        pedido.setId(pedidoDTO.getId());
         pedido.setFecha(LocalDateTime.now());
         pedido.setEstado(pedidoDTO.getEstado());
         pedido.setBaseImponible(pedidoDTO.getBaseImponible());
@@ -116,7 +115,6 @@ public class PedidoService {
 
     public PedidoDTO convertToDTO(Pedido pedido){
         return new PedidoDTO(
-                pedido.getId(),
                 pedido.getFecha(),
                 pedido.getNumeroTurno(),
                 pedido.getBaseImponible(),
