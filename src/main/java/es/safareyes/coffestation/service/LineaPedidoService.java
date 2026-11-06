@@ -42,6 +42,12 @@ public class LineaPedidoService {
         return lineaPedidoRepository.getProductosMasVendidos(fechaMinima, fechaMaxima);
     }
 
+    public LineaPedidoDTO getLineaPedidoById(Long id) {
+        LineaPedido lp = lineaPedidoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Línea de pedido " + id + " no existe"));
+        return convertToDTO(lp);
+    }
+
     public LineaPedidoDTO createLineaPedido(LineaPedidoDTOCrear dto) {
         Pedido pedido = pedidoRepository.findById(dto.getIdPedido())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Pedido " + dto.getIdPedido() + " no existe"));

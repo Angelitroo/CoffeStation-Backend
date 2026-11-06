@@ -37,6 +37,12 @@ public class LineaPedidoController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<LineaPedidoDTO> getLineaPedidoById(@PathVariable Long id) {
+        return ResponseEntity.ok(lineaPedidoService.getLineaPedidoById(id));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/crear")
     public LineaPedidoDTO createLineaPedido(@RequestBody LineaPedidoDTOCrear dto) {
         return lineaPedidoService.createLineaPedido(dto);
