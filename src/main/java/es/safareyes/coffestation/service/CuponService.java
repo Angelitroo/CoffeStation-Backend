@@ -44,16 +44,16 @@ public class CuponService {
 
     public CuponDTO createCupon(CuponDTO dto) {
         Cupon cupon = new Cupon();
-        cupon.setCodigo(dto.getCodigo());
-        cupon.setTipo(dto.getTipo());
-        cupon.setValor(dto.getValor());
-        cupon.setFechaInicio(dto.getFechaInicio());
-        cupon.setFechaFin(dto.getFechaFin());
-        cupon.setMaxUsos(dto.getMaxUsos());
-        cupon.setImporteMinimo(dto.getImporteMinimo());
+        cupon.setCodigo(dto.codigo());
+        cupon.setTipo(dto.tipo());
+        cupon.setValor(dto.valor());
+        cupon.setFechaInicio(dto.fechaInicio());
+        cupon.setFechaFin(dto.fechaFin());
+        cupon.setMaxUsos(dto.maxUsos());
+        cupon.setImporteMinimo(dto.importeMinimo());
 
-        Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente " + dto.getClienteId() + " no existe"));
+        Cliente cliente = clienteRepository.findById(dto.clienteId())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente " + dto.clienteId() + " no existe"));
         cupon.setCliente(cliente);
 
         return convertToDTO(cuponRepository.save(cupon));
@@ -67,16 +67,13 @@ public class CuponService {
     public CuponValidarDTO validarCupon(String codigo) {
         Cupon cupon = cuponRepository.findCuponByCodigo(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));
-        CuponValidarDTO cuponValidarDTO = new CuponValidarDTO();
-        cuponValidarDTO.setCodigo(codigo);
-        cuponValidarDTO.setMaxUsos(cupon.getMaxUsos());
-        cuponValidarDTO.setFechaFin(cupon.getFechaFin());
+        CuponValidarDTO cuponValidarDTO = new CuponValidarDTO(codigo, cupon.getFechaFin(), cupon.getMaxUsos());
 
         Integer usos = pedidoRepository.findUsosCupon(codigo);
 
         if (codigo != null &&
-                cuponValidarDTO.getMaxUsos() > usos &&
-                cuponValidarDTO.getFechaFin().isAfter(LocalDateTime.now()))
+                cuponValidarDTO.maxUsos() > usos &&
+                cuponValidarDTO.fechaFin().isAfter(LocalDateTime.now()))
         {
 
         }

@@ -49,21 +49,21 @@ public class LineaPedidoService {
     }
 
     public LineaPedidoDTO createLineaPedido(LineaPedidoDTOCrear dto) {
-        Pedido pedido = pedidoRepository.findById(dto.getIdPedido())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido " + dto.getIdPedido() + " no existe"));
-        Producto producto = productoRepository.findById(dto.getIdProducto())
-                .orElseThrow(() -> new RecursoNoEncontradoException("Producto " + dto.getIdProducto() + " no existe"));
+        Pedido pedido = pedidoRepository.findById(dto.idPedido())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pedido " + dto.idPedido() + " no existe"));
+        Producto producto = productoRepository.findById(dto.idProducto())
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto " + dto.idProducto() + " no existe"));
 
         BigDecimal precioSinIva = producto.getPrecioSinIva();
         BigDecimal iva = producto.getIva();
-        BigDecimal cantidad = BigDecimal.valueOf(dto.getCantidad());
+        BigDecimal cantidad = BigDecimal.valueOf(dto.cantidad());
         BigDecimal importeIva = precioSinIva.multiply(iva).movePointLeft(2);
 
         LineaPedido lp = new LineaPedido();
         lp.setPedido(pedido);
         lp.setProducto(producto);
 
-        lp.setCantidad(dto.getCantidad());
+        lp.setCantidad(dto.cantidad());
         lp.setPrecioSinIva(producto.getPrecioSinIva());
         lp.setIva(producto.getIva());
         BigDecimal total = precioSinIva.add(importeIva)

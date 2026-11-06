@@ -71,19 +71,19 @@ public class ProductoService {
 
     public ProductoDTO createProducto(ProductoDTOcrear productoDTO){
         Producto producto = new Producto();
-        producto.setNombre(productoDTO.getNombre());
-        producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setPrecioSinIva(productoDTO.getPrecio());
-        producto.setIva(productoDTO.getIva());
-        producto.setDisponible(productoDTO.getDisponible());
-        producto.setActivo(productoDTO.getActivo());
+        producto.setNombre(productoDTO.nombre());
+        producto.setDescripcion(productoDTO.descripcion());
+        producto.setPrecioSinIva(productoDTO.precio());
+        producto.setIva(productoDTO.iva());
+        producto.setDisponible(productoDTO.disponible());
+        producto.setActivo(productoDTO.activo());
 
-        Categoria categoria = categoriaRepository.findById(productoDTO.getCategoriaId())
+        Categoria categoria = categoriaRepository.findById(productoDTO.categoriaId())
                 .orElseThrow(() -> new RecursoNoEncontradoException("Categoria no encontrada"));
         producto.setCategoria(categoria);
 
-        List<Alergeno> alergenos = alergenoRepository.findAllById(productoDTO.getAlergenosIds());
-        if (alergenos.size() != productoDTO.getAlergenosIds().size()) {
+        List<Alergeno> alergenos = alergenoRepository.findAllById(productoDTO.alergenosIds());
+        if (alergenos.size() != productoDTO.alergenosIds().size()) {
             throw new ConflictoException("Uno o más IDs de alérgenos no son válidos");
         }
         producto.setAlergeno(alergenos);
@@ -96,12 +96,12 @@ public class ProductoService {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-        producto.setNombre(productoDTO.getNombre());
-        producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setPrecioSinIva(productoDTO.getPrecioSinIva());
-        producto.setIva(productoDTO.getIva());
-        producto.setDisponible(productoDTO.getDisponible());
-        producto.setActivo(productoDTO.getActivo());
+        producto.setNombre(productoDTO.nombre());
+        producto.setDescripcion(productoDTO.descripcion());
+        producto.setPrecioSinIva(productoDTO.precioSinIva());
+        producto.setIva(productoDTO.iva());
+        producto.setDisponible(productoDTO.disponible());
+        producto.setActivo(productoDTO.activo());
 
         Producto productoUpdated = productoRepository.save(producto);
         return convertToDTO(productoUpdated);

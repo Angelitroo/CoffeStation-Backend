@@ -1,23 +1,17 @@
 package es.safareyes.coffestation.dto;
 
 import es.safareyes.coffestation.enums.Tipo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CuponDTO {
-    private String codigo;
-    private Tipo tipo;
-    private BigDecimal valor;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFin;
-    private Integer maxUsos;
-    private BigDecimal importeMinimo;
-    private Long clienteId;
-}
+public record CuponDTO(
+        String codigo,
+        Tipo tipo,
+        BigDecimal valor,
+        LocalDateTime fechaInicio,
+        LocalDateTime fechaFin,
+        Integer maxUsos,
+        BigDecimal importeMinimo,
+        Long clienteId
+) {}

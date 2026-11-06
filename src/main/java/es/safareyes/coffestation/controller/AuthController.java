@@ -24,13 +24,13 @@ public class AuthController {
     @PostMapping("/login")
     public TokenDTO login(@Valid @RequestBody LoginDTO dto) {
         Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getNombre(), dto.getPassword()));
+                new UsernamePasswordAuthenticationToken(dto.nombre(), dto.password()));
         return new TokenDTO(jwtService.generarToken(auth));
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registro(@Valid @RequestBody LoginDTO dto) {
-        usuarioService.registrarCliente(dto.getNombre(), dto.getPassword());
+        usuarioService.registrarCliente(dto.nombre(), dto.password());
     }
 }

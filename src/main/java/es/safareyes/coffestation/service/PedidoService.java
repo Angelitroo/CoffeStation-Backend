@@ -53,10 +53,10 @@ public class PedidoService {
     public PedidoDTO createPedido(PedidoDTO pedidoDTO){
         Pedido pedido = new Pedido();
         pedido.setFecha(LocalDateTime.now());
-        pedido.setEstado(pedidoDTO.getEstado());
-        pedido.setBaseImponible(pedidoDTO.getBaseImponible());
-        pedido.setSubtotal(pedidoDTO.getSubtotal());
-        pedido.setTotal(pedidoDTO.getTotal());
+        pedido.setEstado(pedidoDTO.estado());
+        pedido.setBaseImponible(pedidoDTO.baseImponible());
+        pedido.setSubtotal(pedidoDTO.subtotal());
+        pedido.setTotal(pedidoDTO.total());
 
         //El número de turno es el número de pedidos creados ese día más uno.
         Long numeroPedidosL = pedidoRepository.getPedidosByFecha(LocalDate.now());
@@ -66,8 +66,8 @@ public class PedidoService {
         pedido.setNumeroTurno(numeroPedidosI + 1);
 
         //Primero vemos si se usa cupon o no
-        if (pedidoDTO.getCuponId() != null) {
-            Cupon cupon = cuponRepository.findById(pedidoDTO.getCuponId())
+        if (pedidoDTO.cuponId() != null) {
+            Cupon cupon = cuponRepository.findById(pedidoDTO.cuponId())
                     .orElseThrow(() -> new IllegalArgumentException("Cupon no encontrado"));
             //En caso de usar un cupon se le resta un uso maximo al cupon
             cupon.setMaxUsos(cupon.getMaxUsos() - 1);
