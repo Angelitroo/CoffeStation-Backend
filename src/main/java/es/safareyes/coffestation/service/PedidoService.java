@@ -2,6 +2,7 @@ package es.safareyes.coffestation.service;
 
 import es.safareyes.coffestation.dto.PedidoDTO;
 import es.safareyes.coffestation.enums.Estado;
+import es.safareyes.coffestation.exceptions.ReglaNegocioException;
 import es.safareyes.coffestation.model.Cupon;
 import es.safareyes.coffestation.model.Descuento;
 import es.safareyes.coffestation.model.LineaPedido;
@@ -45,6 +46,10 @@ public class PedidoService {
         return pedidoRepository.findById(id).orElse(null);
     }
 
+    ////////////////////////////////////////////////////////////////////////
+    //SIGUIENTE SESION:
+    //EL pedido esta formado por una serie de lineas de pedido, de esas lineas sacar los datos para caluclar
+    //totales subtotales etc, es la suma de esas lineapedidos que forman en pedido
     public PedidoDTO createPedido(PedidoDTO pedidoDTO){
         Pedido pedido = new Pedido();
         pedido.setFecha(LocalDateTime.now());
@@ -75,15 +80,28 @@ public class PedidoService {
     }
 
 
-    public Pedido updatePedidoEstado(Long id, Estado estado) {
+    public Pedido updatePedidoEstado(Long id, Estado estadoNuevo) {
         //Cogemos el pedido que queremos actualizar
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+
+        //Transiciones válidas: PENDIENTE → EN_PREPARACION → LISTO → ENTREGADO y PENDIENTE → CANCELADO .
+        //Cualquier otra devuelve 422
+        Estado actual = pedido.getEstado();
+        boolean valida = switch (actual) {
+            case PENDIENTE      -> estadoNuevo == Estado.EN_PREPARACION || estadoNuevo == Estado.CANCELADO;
+            case EN_PREPARACION -> estadoNuevo == Estado.LISTO;
+            case LISTO          -> estadoNuevo == Estado.ENTREGADO;
+            case ENTREGADO, CANCELADO -> false;
+        };
+        if (!valida) {
+            throw new ReglaNegocioException("Transición no permitida: " + actual + " → " + estadoNuevo);
+        }
         //Cogemos el nuevo valor del estado y seteamos
-        pedido.setEstado(estado);
+        pedido.setEstado(estadoNuevo);
 
         //Cancelar un pedido devuelve el uso al cupón aplicado.
-        if (estado == Estado.CANCELADO && pedido.getCupon() != null) {
+        if (estadoNuevo == Estado.CANCELADO && pedido.getCupon() != null) {
             Cupon cupon = pedido.getCupon();
             /*
             Le sumamos el numero de usos a los que le quedaban:
