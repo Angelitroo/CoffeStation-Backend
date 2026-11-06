@@ -4,6 +4,7 @@ import es.safareyes.coffestation.dto.CuponDTO;
 import es.safareyes.coffestation.dto.CuponValidarDTO;
 import es.safareyes.coffestation.model.Cupon;
 import es.safareyes.coffestation.service.CuponService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +38,7 @@ public class CuponController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/crear")
-    public CuponDTO createCupon(@RequestBody CuponDTO cuponDTO){
+    public CuponDTO createCupon(@Valid @RequestBody CuponDTO cuponDTO){
         return cuponService.createCupon(cuponDTO);
     }
 

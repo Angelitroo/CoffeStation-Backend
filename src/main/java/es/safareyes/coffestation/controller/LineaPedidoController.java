@@ -5,6 +5,7 @@ import es.safareyes.coffestation.dto.LineaPedidoDTOCrear;
 import es.safareyes.coffestation.dto.ProductoRankingDTO;
 import es.safareyes.coffestation.dto.ResumenDiaDTO;
 import es.safareyes.coffestation.service.LineaPedidoService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class LineaPedidoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/crear")
-    public LineaPedidoDTO createLineaPedido(@RequestBody LineaPedidoDTOCrear dto) {
+    public LineaPedidoDTO createLineaPedido(@Valid @RequestBody LineaPedidoDTOCrear dto) {
         return lineaPedidoService.createLineaPedido(dto);
     }
 }

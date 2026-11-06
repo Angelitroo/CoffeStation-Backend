@@ -3,12 +3,15 @@ import es.safareyes.coffestation.dto.PedidoDTO;
 import es.safareyes.coffestation.enums.Estado;
 import es.safareyes.coffestation.model.Pedido;
 import es.safareyes.coffestation.service.PedidoService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/pedidos")
 @AllArgsConstructor
+@Validated
 public class PedidoController {
 
     private PedidoService pedidoService;
@@ -42,13 +46,13 @@ public class PedidoController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<PedidoDTO> createPedido(@RequestBody PedidoDTO pedidoDTO){
+    public ResponseEntity<PedidoDTO> createPedido(@Valid @RequestBody PedidoDTO pedidoDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.createPedido(pedidoDTO));
     }
 
 
     @PutMapping("/actualizar/estado/{id}")
-    public Pedido updatePedidoEstado(@PathVariable Long id, @RequestBody Estado estado){
+    public Pedido updatePedidoEstado(@PathVariable Long id, @NotNull @RequestBody Estado estado){
         return pedidoService.updatePedidoEstado(id, estado);
     }
 
