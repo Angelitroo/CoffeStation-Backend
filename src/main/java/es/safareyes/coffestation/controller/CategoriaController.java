@@ -1,13 +1,12 @@
 package es.safareyes.coffestation.controller;
 
+import es.safareyes.coffestation.dto.ProductoDTO;
 import es.safareyes.coffestation.model.Categoria;
 import es.safareyes.coffestation.service.CategoriaService;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,4 +26,11 @@ public class CategoriaController {
     public ResponseEntity<List<Categoria>> getAllCategoriasConProductosActivos(){
         return ResponseEntity.ok(categoriaService.getAllCategoriasConProductosActivos());
     }
+
+    @PatchMapping("/actualizar/disponibilidad/{id}")
+    public ResponseEntity<List<ProductoDTO>> actualizarDisponibilidad(@PathVariable Long id, @NotNull @RequestBody Boolean disponibilidad){
+        return ResponseEntity.ok(categoriaService.actualizarDisponibilidad(disponibilidad, id));
+    }
+
+
 }

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /*
 Buscar productos por categoría, texto en el nombre, precio
 máximo, disponibilidad y excluyendo un alérgeno, con
@@ -16,6 +18,10 @@ paginación.
  */
 @Repository
 public interface ProductoRepository extends JpaRepository <Producto, Long>, JpaSpecificationExecutor<Producto>{
+
+    //Todos los productos con la categoria indicada
+    List<Producto> findByCategoriaId(Long idCategoria);
+
     /*
     Page<Producto> findByNombreContainingIgnoreCase(String texto, Pageable pageable);
 
