@@ -19,22 +19,27 @@ public class CuponController {
 
     private CuponService cuponService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<CuponDTO> getAllCupones(){
         return cuponService.getAllCupones();
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public CuponDTO getCuponById(@PathVariable Long id){
         return cuponService.getCuponById(id);
     }
+
 
     @GetMapping("/codigo/{codigo}")
     public CuponDTO getCuponByCodigo(@PathVariable String codigo){
         return cuponService.getCuponByCodigo(codigo);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/usos/{codigo}")
     public Integer getUsosCupon(@PathVariable String codigo){
         return cuponService.getUsosCupon(codigo);

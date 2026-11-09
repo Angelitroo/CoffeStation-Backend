@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class PedidoController {
 
     private PedidoService pedidoService;
 
+    @PreAuthorize("hasAnyRole('ADMIN','BARISTA')")
     @GetMapping
     public Page<PedidoDTO> getAllPedidos(
             @RequestParam(required = false) LocalDateTime fecha,
@@ -35,23 +37,27 @@ public class PedidoController {
         return pedidoService.getAllPedidosFiltros(fecha, estado, pageable);
     }
 
+    //Lo ideal sería comprobar también que el pedido es del cliente que lo pide
+    @PreAuthorize("hasAnyRole('ADMIN','BARISTA')")
     @GetMapping("/{id}")
     public Pedido getPedidoById(@PathVariable Long id){
         return pedidoService.getPedidoById(id);
     }
 
 
+    @PreAuthorize("hasAnyRole('CLIENTE','BARISTA')")
     @PostMapping("/crear")
     public ResponseEntity<PedidoDTO> createPedido(@Valid @RequestBody PedidoDTO pedidoDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.createPedido(pedidoDTO));
     }
 
-
+    @PreAuthorize("hasAnyRole('ADMIN','BARISTA')")
     @PatchMapping("/actualizar/estado/{id}")
     public Pedido updatePedidoEstado(@PathVariable Long id, @NotNull @RequestBody Estado estado){
         return pedidoService.updatePedidoEstado(id, estado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("eliminar/{id}")
     public ResponseEntity<String> deletePedidoById(@PathVariable Long id){
         try {

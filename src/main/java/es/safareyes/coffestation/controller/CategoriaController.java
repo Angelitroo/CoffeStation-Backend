@@ -6,6 +6,7 @@ import es.safareyes.coffestation.service.CategoriaService;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class CategoriaController {
         return ResponseEntity.ok(categoriaService.getAllCategoriasConProductosActivos());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','BARISTA')")
     @PatchMapping("/actualizar/disponibilidad/{id}")
     public ResponseEntity<List<ProductoDTO>> actualizarDisponibilidad(@PathVariable Long id, @NotNull @RequestBody Boolean disponibilidad){
         return ResponseEntity.ok(categoriaService.actualizarDisponibilidad(disponibilidad, id));

@@ -31,6 +31,7 @@ public class LineaPedidoController {
         return ResponseEntity.ok(lineaPedidoService.getResumenDiaByFecha(fecha));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ranking")
     public List<ProductoRankingDTO> getProductosMasVendidos(
             @RequestParam LocalDate fechaMinima,
@@ -39,13 +40,13 @@ public class LineaPedidoController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','BARISTA')")
     @GetMapping("/{id}")
     public ResponseEntity<LineaPedidoDTO> getLineaPedidoById(@PathVariable Long id) {
         return ResponseEntity.ok(lineaPedidoService.getLineaPedidoById(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENTE','BARISTA')")
     @PostMapping("/crear")
     public LineaPedidoDTO createLineaPedido(@Valid @RequestBody LineaPedidoDTOCrear dto) {
         return lineaPedidoService.createLineaPedido(dto);
