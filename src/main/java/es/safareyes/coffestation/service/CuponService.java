@@ -66,6 +66,8 @@ public class CuponService {
     vigencia,no ha alcanzado sus usos máximos, el subtotal supera su importe mínimo y,
     si es personal,el email coincide con el del cliente.
     */
+    //a traves de cupon.getidCliente --> compara ese email con el de dentro de la aplicacion, atraves de token ejem
+    //Validar permite que se use, es una comprobacion, validar=canjear
     public CuponValidarDTO validarCupon(String codigo) {
         Cupon cupon = cuponRepository.findCuponByCodigo(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));

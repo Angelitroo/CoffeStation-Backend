@@ -1,6 +1,7 @@
 package es.safareyes.coffestation.controller;
 
 import es.safareyes.coffestation.dto.LoginDTO;
+import es.safareyes.coffestation.dto.RegistroDTO;
 import es.safareyes.coffestation.dto.TokenDTO;
 import es.safareyes.coffestation.security.JwtService;
 import es.safareyes.coffestation.service.UsuarioService;
@@ -30,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registro(@Valid @RequestBody LoginDTO dto) {
-        usuarioService.registrarCliente(dto.nombre(), dto.password());
+    public void registro(@Valid @RequestBody RegistroDTO dto) {
+        usuarioService.registrarCliente(dto);
     }
 }
