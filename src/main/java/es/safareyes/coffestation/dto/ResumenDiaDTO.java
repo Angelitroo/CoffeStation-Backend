@@ -6,6 +6,6 @@ import java.time.LocalDate;
 public record ResumenDiaDTO(
         LocalDate fecha,
         Long numeroPedidos,
-        BigDecimal total,        // Precio con IVA
-        BigDecimal base          // Precio sin IVA
+        BigDecimal base,        // Precio con IVA
+        BigDecimal total          // Precio sin IVA
 ) {}

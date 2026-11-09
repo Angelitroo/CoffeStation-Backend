@@ -45,7 +45,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.getProductoById(id));
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<ProductoDTO> createProducto(@Valid @RequestBody ProductoDTOcrear productoDTOcrear){
         return ResponseEntity.ok(productoService.createProducto(productoDTOcrear));
     }
@@ -60,7 +60,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.updateProductoDisponibilidad(disponibilidad, id));
     }
 
-    @DeleteMapping("eliminar/{id}")
+    @DeleteMapping("eliminar/{id}") 
     public ResponseEntity<String> deleteProducto(@PathVariable Long id){
         try {
             return ResponseEntity.ok(productoService.deleteProductoById(id));

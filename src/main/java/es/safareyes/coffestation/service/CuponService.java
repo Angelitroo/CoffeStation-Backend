@@ -22,8 +22,6 @@ public class CuponService {
 
     private CuponRepository cuponRepository;
 
-    private PedidoRepository pedidoRepository;
-
     private ClienteRepository clienteRepository;
 
     public List<CuponDTO> getAllCupones() {
@@ -40,6 +38,10 @@ public class CuponService {
         Cupon cupon = cuponRepository.findCuponByCodigo(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));
         return convertToDTO(cupon);
+    }
+
+    public Integer getUsosCupon(String codigo){
+        return cuponRepository.findUsosCupon(codigo);
     }
 
     public CuponDTO createCupon(CuponDTO dto) {
@@ -69,7 +71,7 @@ public class CuponService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));
         CuponValidarDTO cuponValidarDTO = new CuponValidarDTO(codigo, cupon.getFechaFin(), cupon.getMaxUsos());
 
-        Integer usos = pedidoRepository.findUsosCupon(codigo);
+        Integer usos = cuponRepository.findUsosCupon(codigo);
 
         if (codigo != null &&
                 cuponValidarDTO.maxUsos() > usos &&

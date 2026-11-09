@@ -31,11 +31,13 @@ public class LineaPedidoController {
         return ResponseEntity.ok(lineaPedidoService.getResumenDiaByFecha(fecha));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ranking")
-    public List<ProductoRankingDTO> getProductosMasVendidos(LocalDate fechaMinima, LocalDate fechaMaxima) {
-        return lineaPedidoService.getProductosMasVendidos(fechaMinima,fechaMaxima);
+    public List<ProductoRankingDTO> getProductosMasVendidos(
+            @RequestParam LocalDate fechaMinima,
+            @RequestParam LocalDate fechaMaxima) {
+        return lineaPedidoService.getProductosMasVendidos(fechaMinima, fechaMaxima);
     }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")

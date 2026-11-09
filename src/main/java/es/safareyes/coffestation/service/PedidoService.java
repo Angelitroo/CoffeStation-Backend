@@ -109,16 +109,12 @@ public class PedidoService {
             pero como no sabemos el numero original lo que hacemos es "restaurar" el numero original
              */
 
-            Integer usos = pedidoRepository.findUsosCupon(cupon.getCodigo());
+            Integer usos = cuponRepository.findUsosCupon(cupon.getCodigo());
             cupon.setMaxUsos(cupon.getMaxUsos() + usos);
         }
         return pedidoRepository.save(pedido);
     }
 
-    public Integer getUsosCupon(String codigo){
-        return pedidoRepository.findUsosCupon(codigo);
-
-    }
 
     public String deletePedidoById(Long id){
         List<Descuento> descuentos = descuentoRepository.findAllByPedidoId(id);

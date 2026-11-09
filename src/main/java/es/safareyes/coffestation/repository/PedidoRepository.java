@@ -15,10 +15,6 @@ import java.util.List;
 @Repository
 public interface PedidoRepository extends JpaRepository <Pedido, Long>, JpaSpecificationExecutor<Pedido> {
 
-    //Saco el numero de usos
-    @Query("select count(p) from Pedido p where p.cupon.codigo = :codigo")
-    Integer findUsosCupon(String codigo);
-
     //Cuento numero de pedidos creados en un dia, independientemente de detalles
     @Query("SELECT COUNT(p) FROM Pedido p WHERE CAST(p.fecha AS LocalDate) = :fecha")
     Long getPedidosByFecha(LocalDate fecha);

@@ -35,6 +35,11 @@ public class CuponController {
         return cuponService.getCuponByCodigo(codigo);
     }
 
+    @GetMapping("/usos/{codigo}")
+    public Integer getUsosCupon(@PathVariable String codigo){
+        return cuponService.getUsosCupon(codigo);
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/crear")

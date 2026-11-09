@@ -40,10 +40,6 @@ public class PedidoController {
         return pedidoService.getPedidoById(id);
     }
 
-    @GetMapping("/cupon/{codigo}")
-    public Integer getUsosCupon(@PathVariable String codigo){
-        return pedidoService.getUsosCupon(codigo);
-    }
 
     @PostMapping("/crear")
     public ResponseEntity<PedidoDTO> createPedido(@Valid @RequestBody PedidoDTO pedidoDTO){
@@ -51,7 +47,7 @@ public class PedidoController {
     }
 
 
-    @PutMapping("/actualizar/estado/{id}")
+    @PatchMapping("/actualizar/estado/{id}")
     public Pedido updatePedidoEstado(@PathVariable Long id, @NotNull @RequestBody Estado estado){
         return pedidoService.updatePedidoEstado(id, estado);
     }

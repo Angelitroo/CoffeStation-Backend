@@ -27,6 +27,7 @@ public class ErrorController {
     public ProblemDetail conflicto(ConflictoException e) {
         return construir(HttpStatus.CONFLICT, "Conflicto con los datos existentes", e.getMessage());
     }
+
     @ExceptionHandler(ReglaNegocioException.class)
     public ProblemDetail reglaNegocio(ReglaNegocioException e) {
         return construir(HttpStatus.UNPROCESSABLE_CONTENT, "Regla de negocio incumplida",

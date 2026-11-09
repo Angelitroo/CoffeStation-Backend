@@ -24,8 +24,9 @@ public interface LineaPedidoRepository extends JpaRepository <LineaPedido, Long>
     SELECT new es.safareyes.coffestation.dto.ResumenDiaDTO(
             /*Fecha*/         CAST(:fecha AS LocalDate),
             /*Numero pedidos*/COUNT(DISTINCT p.id),
-            /*Precio con IVA*/COALESCE(SUM(l.cantidad * l.precioSinIva), 0),
-            /*Precio sin IVA*/COALESCE(SUM(l.cantidad * l.precioSinIva) * l.iva, 0)
+            /*Precio sin IVA*/COALESCE(SUM(l.cantidad * l.precioSinIva), 0),
+            /*Precio con IVA*/COALESCE(ROUND(SUM(l.cantidad * l.precioSinIva * (1 + l.iva / 100)), 2), 0)
+                                                                                               
         )
         FROM LineaPedido l
         JOIN l.pedido p
