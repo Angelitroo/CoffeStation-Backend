@@ -3,15 +3,18 @@ package es.safareyes.coffestation.service;
 import es.safareyes.coffestation.dto.CuponDTO;
 import es.safareyes.coffestation.dto.CuponValidarDTO;
 import es.safareyes.coffestation.exceptions.RecursoNoEncontradoException;
+import es.safareyes.coffestation.exceptions.ReglaNegocioException;
 import es.safareyes.coffestation.model.Cliente;
 import es.safareyes.coffestation.model.Cupon;
 import es.safareyes.coffestation.repository.ClienteRepository;
 import es.safareyes.coffestation.repository.CuponRepository;
 import es.safareyes.coffestation.repository.PedidoRepository;
+import es.safareyes.coffestation.security.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +26,8 @@ public class CuponService {
     private CuponRepository cuponRepository;
 
     private ClienteRepository clienteRepository;
+
+    private JwtService jwtService;
 
     public List<CuponDTO> getAllCupones() {
         return cuponRepository.findAll().stream().map(this::convertToDTO).toList();
@@ -66,23 +71,44 @@ public class CuponService {
     vigencia,no ha alcanzado sus usos máximos, el subtotal supera su importe mínimo y,
     si es personal,el email coincide con el del cliente.
     */
-    //a traves de cupon.getidCliente --> compara ese email con el de dentro de la aplicacion, atraves de token ejem
-    //Validar permite que se use, es una comprobacion, validar=canjear
-    public CuponValidarDTO validarCupon(String codigo) {
+    //A traves de cupon.getidCliente --> compara ese email con el de dentro de la aplicación, a través de token ejem
+    //Validar permite que se use, es una comprobación, validar=canjear
+    public CuponValidarDTO validarCupon(String codigo, BigDecimal subtotal) {
+        // Existe?
         Cupon cupon = cuponRepository.findCuponByCodigo(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado: " + codigo));
-        CuponValidarDTO cuponValidarDTO = new CuponValidarDTO(codigo, cupon.getFechaFin(), cupon.getMaxUsos());
 
-        Integer usos = cuponRepository.findUsosCupon(codigo);
-
-        if (codigo != null &&
-                cuponValidarDTO.maxUsos() > usos &&
-                cuponValidarDTO.fechaFin().isAfter(LocalDateTime.now()))
-        {
-
+        // fecha actual está dentro de vigencia
+        if (LocalDateTime.now().isBefore(cupon.getFechaInicio())) {
+            throw new ReglaNegocioException("El cupón todavía no está activo");
+        }
+        if (LocalDateTime.now().isAfter(cupon.getFechaFin())) {
+            throw new ReglaNegocioException("El cupón ha caducado");
         }
 
-        return cuponValidarDTO;
+        // Usos máximos
+        Integer usos = cuponRepository.findUsosCupon(codigo);
+        if (usos >= cupon.getMaxUsos()) {
+            throw new ReglaNegocioException("El cupón ha alcanzado su número máximo de usos");
+        }
+
+        //subtotal supera su importe mínimo
+        if (cupon.getImporteMinimo() != null && subtotal.compareTo(cupon.getImporteMinimo()) < 0) {
+            throw new ReglaNegocioException("El subtotal no alcanza el importe mínimo de " + cupon.getImporteMinimo() + " €");
+        }
+
+        //email coincide con el del cliente
+        if (cupon.getCliente() != null) {
+            Long idUsuarioActual = jwtService.getUsuarioActual().getId();
+            Long idUsuarioCupon = cupon.getCliente().getUsuario().getId();
+            if (!idUsuarioCupon.equals(idUsuarioActual)) {
+                throw new ReglaNegocioException("Este cupón no pertenece al cliente actual");
+            }
+        }
+
+
+        return new CuponValidarDTO(codigo, cupon.getFechaFin(), cupon.getMaxUsos());
+
     }
 
     public CuponDTO convertToDTO(Cupon cupon) {
