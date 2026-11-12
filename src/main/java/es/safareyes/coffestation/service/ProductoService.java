@@ -59,6 +59,7 @@ public class ProductoService {
         Producto p = productoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto " + id + " no existe"));
 
+        //RN-01: un producto dado de baja no aparece
         if (!p.getActivo()) {
             throw new ReglaNegocioException("Producto " + p.getId() + " (" + p.getNombre() + ") está dado de baja");
         }
@@ -118,10 +119,15 @@ public class ProductoService {
     }
 
     public String deleteProductoById(Long id){
-        List<LineaPedido> lineas = lineaPedidoRepository.findAllByProductoId(id);
-        lineaPedidoRepository.deleteAll(lineas);
-        productoRepository.deleteById(id);
-        return "Producto Eliminado";
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto " + id + " no existe"));
+        if (!producto.getActivo()) {
+            throw new ReglaNegocioException("Producto " + id + " ya está dado de baja");
+        }
+        //RN-01: baja lógica, no se borra para conservarlo en los pedidos antiguos
+        producto.setActivo(false);
+        productoRepository.save(producto);
+        return "Producto dado de baja";
     }
 
 

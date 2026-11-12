@@ -58,7 +58,7 @@ public class PedidoService {
         pedido.setSubtotal(pedidoDTO.subtotal());
         pedido.setTotal(pedidoDTO.total());
 
-        //El número de turno es el número de pedidos creados ese día más uno.
+        //RN-09-El número de turno es el número de pedidos creados ese día más uno.
         Long numeroPedidosL = pedidoRepository.getPedidosByFecha(LocalDate.now());
 
         //Convierto de Long a Integer

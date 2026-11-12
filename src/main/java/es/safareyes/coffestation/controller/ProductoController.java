@@ -67,10 +67,6 @@ public class ProductoController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("eliminar/{id}")
     public ResponseEntity<String> deleteProducto(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(productoService.deleteProductoById(id));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
+        return ResponseEntity.ok(productoService.deleteProductoById(id));
     }
 }
