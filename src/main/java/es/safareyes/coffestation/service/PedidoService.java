@@ -37,6 +37,7 @@ public class PedidoService {
 
     private ProductoService productoService;
 
+    private CuponService cuponService;
 
     private CuponRepository cuponRepository;
 
@@ -121,16 +122,22 @@ public class PedidoService {
         //existe un subtotal y un total, el total es por si se aplica descuento o no
         BigDecimal total = pedido.getSubtotal();
         //Si se usa cupón se aplica el descuento sobre el subtotal y se gasta un uso
+        //Si se usa cupón se valida y se aplica el descuento sobre el subtotal
         if (dto.cuponId() != null) {
             Cupon cupon = cuponRepository.findById(dto.cuponId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado"));
+
+            //Vigencia, usos, importe mínimo (con el subtotal) y que sea del cliente.
+            //Si algo no cumple lanza ReglaNegocioException y, con @Transactional, no se guarda nada
+            cuponService.validarCupon(cupon.getCodigo(), pedido.getSubtotal());
+
             BigDecimal descuento = cupon.getTipo() == Tipo.PORCENTAJE
                     ? total.multiply(cupon.getValor()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
                     : cupon.getValor();
             total = total.subtract(descuento);
-            cupon.setMaxUsos(cupon.getMaxUsos() - 1);
             pedido.setCupon(cupon);
         }
+
         //RN-07: el total nunca puede ser negativo
         pedido.setTotal(total.max(BigDecimal.ZERO));
         Pedido savedPedido = pedidoRepository.save(pedido); //primero el pedido para que tenga id
