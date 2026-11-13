@@ -1,16 +1,14 @@
 package es.safareyes.coffestation.service;
 
+import es.safareyes.coffestation.dto.LineaPedidoDTOCrear;
 import es.safareyes.coffestation.dto.PedidoDTO;
+import es.safareyes.coffestation.dto.PedidoDTOCrear;
 import es.safareyes.coffestation.enums.Estado;
+import es.safareyes.coffestation.enums.Tipo;
+import es.safareyes.coffestation.exceptions.RecursoNoEncontradoException;
 import es.safareyes.coffestation.exceptions.ReglaNegocioException;
-import es.safareyes.coffestation.model.Cupon;
-import es.safareyes.coffestation.model.Descuento;
-import es.safareyes.coffestation.model.LineaPedido;
-import es.safareyes.coffestation.model.Pedido;
-import es.safareyes.coffestation.repository.CuponRepository;
-import es.safareyes.coffestation.repository.DescuentoRepository;
-import es.safareyes.coffestation.repository.LineaPedidoRepository;
-import es.safareyes.coffestation.repository.PedidoRepository;
+import es.safareyes.coffestation.model.*;
+import es.safareyes.coffestation.repository.*;
 import es.safareyes.coffestation.specifications.PedidoSpec;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,22 +35,26 @@ public class PedidoService {
 
     private LineaPedidoRepository lineaPedidoRepository;
 
+    private ProductoService productoService;
+
+
     private CuponRepository cuponRepository;
 
 
-    public Page<PedidoDTO> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable){
+    public Page<PedidoDTO> getAllPedidosFiltros(LocalDateTime fecha, Estado estado, Pageable pageable) {
         return pedidoRepository.findAll(
                 PedidoSpec.filtrosPedidos(fecha, estado), pageable).map(this::convertToDTO);
     }
 
-    public Pedido getPedidoById(Long id){
+    public Pedido getPedidoById(Long id) {
         return pedidoRepository.findById(id).orElse(null);
     }
 
-    ////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////////////////////////////////////////////////
     //SIGUIENTE SESION:
     //EL pedido esta formado por una serie de lineas de pedido, de esas lineas sacar los datos para caluclar
     //totales subtotales etc, es la suma de esas lineapedidos que forman en pedido
+    /*
     public PedidoDTO createPedido(PedidoDTO pedidoDTO){
         Pedido pedido = new Pedido();
         pedido.setFecha(LocalDateTime.now());
@@ -78,7 +83,61 @@ public class PedidoService {
         Pedido savedPedido = pedidoRepository.save(pedido);
         return convertToDTO(savedPedido);
     }
-
+*/
+    public PedidoDTO createPedido(PedidoDTOCrear dto) {
+        Pedido pedido = new Pedido();
+        pedido.setFecha(LocalDateTime.now());
+        pedido.setEstado(Estado.PENDIENTE);
+        //RN-09: turno = pedidos de hoy + 1
+        pedido.setNumeroTurno(pedidoRepository.getPedidosByFecha(LocalDate.now()).intValue() + 1);
+        List<LineaPedido> lineas = new ArrayList<>();
+        for (LineaPedidoDTOCrear l : dto.lineas()) {
+            //RN-01: getProductoById ya comprueba que esté activo y disponible
+            Producto producto = productoService.getProductoById(l.idProducto());
+            //precio sin iva * cantidad
+            BigDecimal baseLinea = l.precioSinIva().multiply(BigDecimal.valueOf(l.cantidad()));
+            //A esa base se le aplica el iva
+            BigDecimal totalLinea = baseLinea
+                    .multiply(BigDecimal.ONE.add(l.iva().divide(BigDecimal.valueOf(100))))
+                    .setScale(2, RoundingMode.HALF_UP);
+            LineaPedido linea = new LineaPedido();
+            linea.setPedido(pedido);
+            linea.setProducto(producto);
+            linea.setCantidad(l.cantidad());
+            linea.setPrecioSinIva(l.precioSinIva());
+            linea.setIva(l.iva());
+            linea.setTotal(totalLinea);
+            lineas.add(linea);
+        }
+        //Una vez creadas todas las líneas, se suman para el pedido
+        //donde base imponible es el total sin iva
+        pedido.setBaseImponible(lineas.stream()
+                .map(lp -> lp.getPrecioSinIva().multiply(BigDecimal.valueOf(lp.getCantidad())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        //subtotal es el total con iva
+        pedido.setSubtotal(lineas.stream()
+                .map(LineaPedido::getTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        //existe un subtotal y un total, el total es por si se aplica descuento o no
+        BigDecimal total = pedido.getSubtotal();
+        //Si se usa cupón se aplica el descuento sobre el subtotal y se gasta un uso
+        if (dto.cuponId() != null) {
+            Cupon cupon = cuponRepository.findById(dto.cuponId())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado"));
+            BigDecimal descuento = cupon.getTipo() == Tipo.PORCENTAJE
+                    ? total.multiply(cupon.getValor()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP)
+                    : cupon.getValor();
+            total = total.subtract(descuento);
+            cupon.setMaxUsos(cupon.getMaxUsos() - 1);
+            pedido.setCupon(cupon);
+        }
+        //RN-07: el total nunca puede ser negativo
+        pedido.setTotal(total.max(BigDecimal.ZERO));
+        Pedido savedPedido = pedidoRepository.save(pedido); //primero el pedido para que tenga id
+        lineaPedidoRepository.saveAll(lineas);              //luego sus líneas
+        return convertToDTO(savedPedido);
+    }
+    
 
     public Pedido updatePedidoEstado(Long id, Estado estadoNuevo) {
         //Cogemos el pedido que queremos actualizar

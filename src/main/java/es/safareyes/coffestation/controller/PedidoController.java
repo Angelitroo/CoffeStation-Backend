@@ -1,5 +1,6 @@
 package es.safareyes.coffestation.controller;
 import es.safareyes.coffestation.dto.PedidoDTO;
+import es.safareyes.coffestation.dto.PedidoDTOCrear;
 import es.safareyes.coffestation.enums.Estado;
 import es.safareyes.coffestation.model.Pedido;
 import es.safareyes.coffestation.service.PedidoService;
@@ -47,7 +48,8 @@ public class PedidoController {
 
     @PreAuthorize("hasAnyRole('CLIENTE','BARISTA')")
     @PostMapping("/crear")
-    public ResponseEntity<PedidoDTO> createPedido(@Valid @RequestBody PedidoDTO pedidoDTO){
+    public ResponseEntity<PedidoDTO> createPedido(@Valid @RequestBody PedidoDTOCrear pedidoDTO)
+    {
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoService.createPedido(pedidoDTO));
     }
 
