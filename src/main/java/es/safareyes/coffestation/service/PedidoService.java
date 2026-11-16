@@ -10,6 +10,7 @@ import es.safareyes.coffestation.exceptions.ReglaNegocioException;
 import es.safareyes.coffestation.model.*;
 import es.safareyes.coffestation.repository.*;
 import es.safareyes.coffestation.specifications.PedidoSpec;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -51,40 +52,7 @@ public class PedidoService {
         return pedidoRepository.findById(id).orElse(null);
     }
 
-    /// /////////////////////////////////////////////////////////////////////
-    //SIGUIENTE SESION:
-    //EL pedido esta formado por una serie de lineas de pedido, de esas lineas sacar los datos para caluclar
-    //totales subtotales etc, es la suma de esas lineapedidos que forman en pedido
-    /*
-    public PedidoDTO createPedido(PedidoDTO pedidoDTO){
-        Pedido pedido = new Pedido();
-        pedido.setFecha(LocalDateTime.now());
-        pedido.setEstado(pedidoDTO.estado());
-        pedido.setBaseImponible(pedidoDTO.baseImponible());
-        pedido.setSubtotal(pedidoDTO.subtotal());
-        pedido.setTotal(pedidoDTO.total());
-
-        //RN-09-El número de turno es el número de pedidos creados ese día más uno.
-        Long numeroPedidosL = pedidoRepository.getPedidosByFecha(LocalDate.now());
-
-        //Convierto de Long a Integer
-        Integer numeroPedidosI = numeroPedidosL.intValue();
-        pedido.setNumeroTurno(numeroPedidosI + 1);
-
-        //Primero vemos si se usa cupon o no
-        if (pedidoDTO.cuponId() != null) {
-            Cupon cupon = cuponRepository.findById(pedidoDTO.cuponId())
-                    .orElseThrow(() -> new IllegalArgumentException("Cupon no encontrado"));
-            //En caso de usar un cupon se le resta un uso maximo al cupon
-            cupon.setMaxUsos(cupon.getMaxUsos() - 1);
-            cuponRepository.save(cupon);
-            pedido.setCupon(cupon);
-        }
-
-        Pedido savedPedido = pedidoRepository.save(pedido);
-        return convertToDTO(savedPedido);
-    }
-*/
+    @Transactional
     public PedidoDTO createPedido(PedidoDTOCrear dto) {
         Pedido pedido = new Pedido();
         pedido.setFecha(LocalDateTime.now());
@@ -121,14 +89,14 @@ public class PedidoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
         //existe un subtotal y un total, el total es por si se aplica descuento o no
         BigDecimal total = pedido.getSubtotal();
-        //Si se usa cupón se aplica el descuento sobre el subtotal y se gasta un uso
-        //Si se usa cupón se valida y se aplica el descuento sobre el subtotal
+        //El uso del cupon se registra al guardar el pedido con el cupón
+        //Si se usa cupón se valida y se aplica el descuento sobre el subtotal -> total
         if (dto.cuponId() != null) {
             Cupon cupon = cuponRepository.findById(dto.cuponId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("Cupón no encontrado"));
 
             //Vigencia, usos, importe mínimo (con el subtotal) y que sea del cliente.
-            //Si algo no cumple lanza ReglaNegocioException y, con @Transactional, no se guarda nada
+            //Si algo no cumple lanza ReglaNegocioException
             cuponService.validarCupon(cupon.getCodigo(), pedido.getSubtotal());
 
             BigDecimal descuento = cupon.getTipo() == Tipo.PORCENTAJE
@@ -145,7 +113,7 @@ public class PedidoService {
         return convertToDTO(savedPedido);
     }
     
-
+    @Transactional
     public Pedido updatePedidoEstado(Long id, Estado estadoNuevo) {
         //Cogemos el pedido que queremos actualizar
         Pedido pedido = pedidoRepository.findById(id)
@@ -166,18 +134,6 @@ public class PedidoService {
         //Cogemos el nuevo valor del estado y seteamos
         pedido.setEstado(estadoNuevo);
 
-        //Cancelar un pedido devuelve el uso al cupón aplicado.
-        if (estadoNuevo == Estado.CANCELADO && pedido.getCupon() != null) {
-            Cupon cupon = pedido.getCupon();
-            /*
-            Le sumamos el numero de usos a los que le quedaban:
-            Explicacion:Por ejemplo teniamos 10 usos maximos y hemos usado 3 lo que lo dejaria en 7,
-            pero como no sabemos el numero original lo que hacemos es "restaurar" el numero original
-             */
-
-            Integer usos = cuponRepository.findUsosCupon(cupon.getCodigo());
-            cupon.setMaxUsos(cupon.getMaxUsos() + usos);
-        }
         return pedidoRepository.save(pedido);
     }
 

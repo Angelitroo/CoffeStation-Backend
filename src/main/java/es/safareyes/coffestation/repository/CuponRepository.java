@@ -12,7 +12,8 @@ import java.util.Optional;
 public interface CuponRepository extends JpaRepository <Cupon, Long> {
     Optional<Cupon> findCuponByCodigo(String codigo);
 
-    //Saco el numero de usos
-    @Query("select count(p) from Pedido p where p.cupon.codigo = :codigo")
+    //Saco el numero de usos, no contamos los cancelados
+    //RN-08 Cancelar un pedido devuelve el uso al cupón aplicado.
+    @Query("select count(p) from Pedido p where p.cupon.codigo = :codigo and p.estado != es.safareyes.coffestation.enums.Estado.CANCELADO")
     Integer findUsosCupon(String codigo);
 }
