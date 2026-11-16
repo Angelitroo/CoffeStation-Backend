@@ -23,7 +23,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Validated
@@ -59,8 +61,23 @@ public class PedidoService {
         pedido.setEstado(Estado.PENDIENTE);
         //RN-09: turno = pedidos de hoy + 1
         pedido.setNumeroTurno(pedidoRepository.getPedidosByFecha(LocalDate.now()).intValue() + 1);
-        List<LineaPedido> lineas = new ArrayList<>();
+
+        //Si el mismo producto llega en varias líneas, se agrupan en una sumando cantidades
+        Map<Long, LineaPedidoDTOCrear> agrupadas = new LinkedHashMap<>();
         for (LineaPedidoDTOCrear l : dto.lineas()) {
+            agrupadas.merge(l.idProducto(), l, (a, b) -> new LineaPedidoDTOCrear(
+                    a.idProducto(),
+                    a.cantidad() + b.cantidad(),
+                    a.precioSinIva(),
+                    a.iva()));
+        }
+
+        List<LineaPedido> lineas = new ArrayList<>();
+        for (LineaPedidoDTOCrear l : agrupadas.values()) {
+            //RN-04: tras agrupar, la línea también debe respetar el máximo de 20 unidades
+            if (l.cantidad() > 20) {
+                throw new ReglaNegocioException("El producto " + l.idProducto() + " supera las 20 unidades");
+            }
             //RN-01: getProductoById ya comprueba que esté activo y disponible
             Producto producto = productoService.getProductoById(l.idProducto());
             //precio sin iva * cantidad
@@ -112,7 +129,8 @@ public class PedidoService {
         lineaPedidoRepository.saveAll(lineas);              //luego sus líneas
         return convertToDTO(savedPedido);
     }
-    
+
+
     @Transactional
     public Pedido updatePedidoEstado(Long id, Estado estadoNuevo) {
         //Cogemos el pedido que queremos actualizar
