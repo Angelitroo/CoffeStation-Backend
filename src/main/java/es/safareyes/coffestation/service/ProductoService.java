@@ -57,7 +57,7 @@ public class ProductoService {
 
     public Producto getProductoById(Long id){
         Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Producto " + id + " no existe"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto " + id + " no existe"));
 
         //RN-01: un producto dado de baja no aparece
         if (!p.getActivo()) {
@@ -95,7 +95,7 @@ public class ProductoService {
 
     public ProductoDTO updateProducto(ProductoDTO productoDTO, Long id){
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado"));
 
         producto.setNombre(productoDTO.nombre());
         producto.setDescripcion(productoDTO.descripcion());
@@ -110,7 +110,7 @@ public class ProductoService {
 
     public ProductoDTO updateProductoDisponibilidad(Boolean disponible, Long id){
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado"));
 
         producto.setDisponible(disponible);
 
