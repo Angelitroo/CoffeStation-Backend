@@ -81,7 +81,9 @@ public class SecurityConfig {
     // El filtro solo decide qué es público y qué necesita token.
     // Los roles se comprueban con @PreAuthorize en cada controlador.
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   EntradaNoAutentificada entradaNoAutenticada,
+                                                   AccesoDenegado accesoDenegado) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -90,8 +92,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/productos/**", "/categorias/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> {}));
+                // Token inválido o caducado -> lo gestiona el resource server
+                .oauth2ResourceServer(oauth -> oauth
+                        .jwt(jwt -> {})
+                        .authenticationEntryPoint(entradaNoAutenticada)
+                        .accessDeniedHandler(accesoDenegado))
+                // Sin token / sin permisos -> lo gestiona el ExceptionTranslationFilter
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(entradaNoAutenticada)
+                        .accessDeniedHandler(accesoDenegado));
 
         return http.build();
     }
+
 }

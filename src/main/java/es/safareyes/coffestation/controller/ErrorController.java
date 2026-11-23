@@ -6,6 +6,7 @@ import es.safareyes.coffestation.exceptions.ReglaNegocioException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,6 +45,13 @@ public class ErrorController {
         problema.setProperty("errores", errores);
         return problema;
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ProblemDetail credencialesIncorrectas(BadCredentialsException e) {
+        return construir(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas",
+                "El usuario o la contraseña no son correctos");
+    }
+
 
     private ProblemDetail construir(HttpStatus estado, String titulo, String detalle) {
         ProblemDetail problema = ProblemDetail.forStatusAndDetail(estado, detalle);
