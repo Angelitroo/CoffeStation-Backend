@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-public class JwtService {
+public class    JwtService {
 
     private final JwtEncoder jwtEncoder;
     private final long expiracionMinutos;
